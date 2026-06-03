@@ -1,0 +1,157 @@
+@import url("https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=DM+Serif+Display&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ──────────────────────────────────────────────────────────────
+   Design tokens (shadcn/ui convention). Editing these here
+   restyles every deck and every slide. This token layer IS the
+   design system the course teaches.
+
+   Palette: warm greys + a single bright-yellow highlight (#fcf403).
+   The yellow is light, so it's used as a FILL / highlighter behind
+   dark text - never as text or thin lines on light backgrounds.
+   ────────────────────────────────────────────────────────────── */
+@layer base {
+  :root {
+    /* warm greys */
+    --background: 40 30% 99%;
+    --foreground: 30 8% 14%;
+
+    --card: 40 24% 98%;
+    --card-foreground: 30 8% 14%;
+
+    --muted: 40 14% 94%;
+    --muted-foreground: 32 7% 42%;
+
+    /* primary = warm ink for most UI */
+    --primary: 30 8% 14%;
+    --primary-foreground: 40 30% 99%;
+
+    /* accent = #fcf403 - the 10% highlight. Dark text sits on top. */
+    --accent: 58 98% 50%;
+    --accent-foreground: 30 10% 12%;
+
+    --border: 38 12% 88%;
+
+    --radius: 0.75rem;
+  }
+
+  * {
+    border-color: hsl(var(--border));
+  }
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    -webkit-font-smoothing: antialiased;
+  }
+  /* Keywords: <strong> renders bold + full-ink so it pops out of muted body text. */
+  strong {
+    font-weight: 700;
+    color: hsl(var(--foreground));
+  }
+}
+
+/* ──────────────────────────────────────────────────────────────
+   Motion - slide entrance + a gentle stagger for the content
+   inside a slide. Tokenized timing so it's easy to tune.
+   ────────────────────────────────────────────────────────────── */
+@layer base {
+  :root {
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --dur: 420ms;
+  }
+}
+
+@keyframes slide-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.animate-slide-in {
+  animation: slide-in var(--dur) var(--ease) both;
+}
+
+/* Children of a slide rise in, lightly staggered, for a polished feel. */
+.animate-slide-in .slide > * {
+  animation: rise-in var(--dur) var(--ease) both;
+}
+.animate-slide-in .slide > *:nth-child(1) { animation-delay: 60ms; }
+.animate-slide-in .slide > *:nth-child(2) { animation-delay: 130ms; }
+.animate-slide-in .slide > *:nth-child(3) { animation-delay: 200ms; }
+.animate-slide-in .slide > *:nth-child(4) { animation-delay: 270ms; }
+.animate-slide-in .slide > *:nth-child(n + 5) { animation-delay: 340ms; }
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-slide-in,
+  .animate-slide-in .slide > * {
+    animation: none;
+  }
+}
+
+/* ──────────────────────────────────────────────────────────────
+   Inline edit mode. When the deck is in editing mode, every text
+   leaf is contentEditable; hint that with a hover/focus outline so
+   it's obvious what can be changed. Dev-only authoring affordance.
+   ────────────────────────────────────────────────────────────── */
+.slide-editing [data-slide-editable] {
+  cursor: text;
+  border-radius: 3px;
+  transition: box-shadow 120ms var(--ease), background-color 120ms var(--ease);
+}
+.slide-editing [data-slide-editable]:hover {
+  box-shadow: 0 0 0 2px hsl(var(--accent));
+  background-color: hsl(var(--accent) / 0.15);
+}
+.slide-editing [data-slide-editable]:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px hsl(var(--accent));
+  background-color: hsl(var(--accent) / 0.18);
+}
+
+/* ── Print: stack every slide as its own page for PDF export ── */
+@media print {
+  @page {
+    size: 1280px 720px;
+    margin: 0;
+  }
+  .deck-chrome {
+    display: none !important;
+  }
+  .slide-stage {
+    display: block !important;
+  }
+  .slide {
+    break-after: page;
+    page-break-after: always;
+  }
+
+  /* Cheat sheet prints as a normal A4 document, not a 16:9 slide. */
+  @page cheat {
+    size: A4 portrait;
+    margin: 14mm;
+  }
+  .cheat-sheet {
+    page: cheat;
+  }
+  /* Per-card export: print just one activity as its own handout. */
+  .printing-one .cheat-card:not(.print-keep) {
+    display: none !important;
+  }
+}
