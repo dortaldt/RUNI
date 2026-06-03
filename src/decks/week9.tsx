@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import {
   Slide,
   Eyebrow,
@@ -8,26 +9,24 @@ import {
   ChecklistSlide,
   GallerySlide,
   DividerSlide,
-  AssignmentSlide,
   Highlight,
-  RefImage,
 } from "@/slides/templates";
 
 /**
  * Workshop: "Design sprint (ish)". Based on Dor's source deck:
  * https://docs.google.com/presentation/d/1BJBo8RG9Yug-aC6XMLAIx6qVGqkCG0OM0iV84JkKrXg
  *
- * Goal: refine work in progress through three proven, timeboxed methods.
+ * Goal: refine work in progress through two proven, timeboxed methods, then
+ * rebuild one part in Figma.
  *   1. Design system audit  (Interface Inventory, Brad Frost) + a detailed M3 checklist
  *   2. UX pattern audit      (Heuristic Evaluation, Nielsen / NN/g)
- *   3. Quick ideation        (Crazy 8s, Google Design Sprint)
  *
- * The rhythm is deliberately uneven: the audit goes deep (two slides, a real
- * checklist), ideation stays punchy and visual. Cheat sheet: /cheatsheet/ai-critique
+ * The rhythm is deliberately uneven: each audit goes deep (a method slide, a real
+ * checklist, a gallery of good examples). Cheat sheet: /cheatsheet/critique
  */
-export const workshopAiPeerReview = {
-  slug: "workshop-ai-peer-review",
-  title: "Workshop · Design sprint (ish)",
+export const week9 = {
+  slug: "week-9",
+  title: "Week 9: Design sprint (ish)",
   slides: [
     <TitleSlide
       course="Design Patterns and Systems · Workshop"
@@ -35,7 +34,7 @@ export const workshopAiPeerReview = {
       subtitle="Reviewing and refining your work in progress"
     />,
     <AgendaSlide
-      title="Three ways to tighten your work"
+      title="Two ways to tighten your work"
       items={[
         <>
           Audit your<strong> design system</strong>, what's inconsistent? (15 min)
@@ -44,7 +43,7 @@ export const workshopAiPeerReview = {
           Audit<strong> </strong>a<strong> flow</strong> with another pair, what's confusing? (20 min)
         </>,
         <>
-          <strong>Ideate fixes</strong> fast, then apply one (15 min)
+          Then <strong>rebuild one part</strong> in Figma
         </>,
       ]}
     />,
@@ -75,10 +74,70 @@ export const workshopAiPeerReview = {
       ]}
     />,
 
+    // A map of the session: two timeboxed passes, then fix one thing.
+    <Slide>
+      <Eyebrow>Today's process</Eyebrow>
+      <h2 className="mt-2 font-serif text-h2 tracking-tight">
+        Two passes, then fix one thing
+      </h2>
+      <p className="mt-2 max-w-3xl text-body text-muted-foreground">
+        Each pass is timeboxed and ends with something concrete to act on. Then
+        you turn one finding into a real change.
+      </p>
+      <div className="mt-8 flex items-stretch gap-3">
+        {[
+          {
+            kicker: "Pass 1 · 15 min",
+            name: "Audit your design system",
+            steps: ["1. Inventory your interface", "2. Audit it against the M3 checklist"],
+          },
+          {
+            kicker: "Pass 2 · 20 min",
+            name: "Audit a design patterns",
+            steps: ["3. Review another pair's flow", "4. Audit the design patterns"],
+          },
+        ].map((p, i) => (
+          <Fragment key={p.name}>
+            {i > 0 && (
+              <div className="flex shrink-0 items-center text-h3 text-muted-foreground/40">
+                →
+              </div>
+            )}
+            <div className="flex flex-1 flex-col rounded-xl bg-muted/40 p-5">
+              <span className="text-caption font-semibold uppercase tracking-widest text-muted-foreground">
+                {p.kicker}
+              </span>
+              <h3 className="mt-2 min-h-[4.2rem] text-h3 font-semibold leading-tight tracking-tight">
+                {p.name}
+              </h3>
+              <ul className="mt-4 space-y-2 border-t border-border pt-4">
+                {p.steps.map((s) => (
+                  <li key={s} className="text-body leading-snug text-foreground">
+                    {s}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </Fragment>
+        ))}
+        <div className="flex shrink-0 items-center text-h3 text-muted-foreground/40">
+          →
+        </div>
+        <div className="flex w-52 shrink-0 flex-col justify-center rounded-xl bg-accent p-5">
+          <span className="text-caption font-semibold uppercase tracking-widest text-accent-foreground/70">
+            The output
+          </span>
+          <p className="mt-2 text-h3 font-semibold leading-tight tracking-tight text-accent-foreground">
+            Rebuild one part
+          </p>
+        </div>
+      </div>
+    </Slide>,
+
     // Activity 1 spans two slides: the method, then a real checklist.
     <ActivitySlide
       index={1}
-      title="Inventory your interface"
+      title="1. Inventory your interface"
       minutes="15 min, in your pair"
       method={{
         label: "Interface Inventory (Brad Frost)",
@@ -86,10 +145,10 @@ export const workshopAiPeerReview = {
       }}
       steps={[
         <>
-          Screenshot every <strong>component</strong> across your screens: buttons, inputs, cards, chips, empty states
+          It's all in Figma already. Pull every <strong>component</strong> onto one board: buttons, inputs, cards, chips, empty states
         </>,
         <>
-          Place them on one board, <strong>grouped like with like</strong>: all buttons together, all inputs, all cards
+          Arrange them <strong>grouped like with like</strong>: all buttons together, all inputs, all cards
         </>,
         <>
           Side by side, near-duplicates are easy to spot. <strong>Audit each group</strong> against the checklist
@@ -130,41 +189,39 @@ export const workshopAiPeerReview = {
       ]}
     />,
     <ChecklistSlide
-      title="Audit the design system"
+      title="2. Audit the design system"
       intro="Check each group against these. Flag anything inconsistent or off the system."
       groups={[
         {
           label: "Type",
           items: [
-            "One type scale: display, headline, title, body, label",
-            "2 to 3 weights only. Heavy weight is for emphasis, not everywhere",
+            <><strong>One type scale</strong>: display, headline, title, body, label</>,
+            <>2 to 3 <strong>weights</strong> only. Heavy weight is for emphasis, not everywhere</>,
             "Line height and spacing come from the scale, not per screen",
           ],
         },
         {
           label: "Color",
           items: [
-            "Named roles (primary, surface, on-surface), not hex everywhere",
-            "60-30-10: neutral, supporting, one accent on the key action",
-            "Text contrast at least 4.5:1, large text 3:1 (WCAG 1.4.3)",
-            "Icons, borders, focus rings at least 3:1 (WCAG 1.4.11)",
+            <>Named <strong>roles</strong> (primary, surface, on-surface), not hex everywhere</>,
+            "60-30-10: neutral, supporting, one accent on the key action (remember?)",
+            <>Text <strong>contrast</strong> at least 4.5:1, large text 3:1 (WCAG 1.4.3)</>,
+            <><strong>Icons</strong>, <strong>borders</strong>, focus rings at least 3:1 (WCAG 1.4.11)</>,
             "Never signal by color alone. Add text or an icon (WCAG 1.4.1)",
           ],
         },
         {
           label: "Spacing & shape",
           items: [
-            "Everything on the 8pt grid (4pt for fine detail). Padding inside < gaps between",
+            <>Everything on the 8pt <strong>grid</strong> (4pt for fine detail). Padding inside &lt; gaps between</>,
             "Corner radius from a small set (4 / 8 / 12 / 16), not a value per card",
           ],
         },
         {
           label: "Components & states",
           items: [
-            "One button, one input, one card. Reused, not redrawn",
-            "Every interactive element: hover, focus, pressed, disabled",
-            "Keyboard focus is always visible",
-            "Targets at least 48x48dp. One icon set, one size",
+            <><strong>One</strong> button, one input, one card. Reused, not redrawn</>,
+            <><strong>States</strong>: hover, focus, pressed, disabled</>,
           ],
         },
       ]}
@@ -173,7 +230,7 @@ export const workshopAiPeerReview = {
 
     <ActivitySlide
       index={2}
-      title="Review another pair's flow"
+      title="3. Review another pair's flow"
       minutes="20 min, with another pair"
       method={{
         label: "Heuristic evaluation (Nielsen, NN/g)",
@@ -198,16 +255,16 @@ export const workshopAiPeerReview = {
           each pair leaves with their issues <Highlight>ranked by severity</Highlight>
         </>
       }
-      link={{ label: "Heuristic + AI checklist", href: "/cheatsheet/ai-critique" }}
+      link={{ label: "Critique checklist", href: "/cheatsheet/critique" }}
       figure={{
-        src: "/refs/heuristic-eval-template.png",
-        caption: "Walk the flow against Nielsen's 10, then log each issue with a fix",
-        credit: "Vincenzo Sole, Dribbble",
-        href: "https://dribbble.com/shots/23128035-Heuristic-Evaluation-Template",
+        src: "/refs/ux-audit-case-study.png",
+        caption: "A real checkout audit: Nielsen's 10 run on the flow, issues plotted and ranked by severity",
+        credit: "Stanislav Stefaniuk, Dribbble",
+        href: "https://dribbble.com/shots/20945867--2020-UX-Audit-Case-Study",
       }}
     />,
     <ChecklistSlide
-      title="Audit the design patterns"
+      title="4. Audit the design patterns"
       intro="Walk the flow and check how it behaves, not just how it looks."
       groups={[
         {
@@ -272,58 +329,36 @@ export const workshopAiPeerReview = {
       ]}
     />,
 
-    // Activity 3: punchy and visual, a different beat from the audits.
-    <Slide>
-      <div className="flex items-center gap-3">
-        <Eyebrow>Activity 3</Eyebrow>
-        <span className="rounded-md bg-accent px-3 py-1 text-caption font-semibold text-accent-foreground">
-          ⏱ 8 min
-        </span>
-      </div>
-      <h2 className="mt-2 font-serif text-h2 tracking-tight">
-        Crazy 8s: sketch alternatives
-      </h2>
-      <p className="mt-2 max-w-3xl text-body text-muted-foreground">
-        Take your top issue and frame it as "How might we...?" Then sketch one idea per box, a minute each.
-        Keep them rough; aim for quantity, not polish.
-      </p>
-      <div className="mt-5 grid grid-cols-[1fr_minmax(0,32%)] items-start gap-8">
-        <div className="grid grid-cols-4 gap-3">
-          {Array.from({ length: 8 }).map((_, i) => (
-            <div
-              key={i}
-              className="flex h-24 items-start rounded-md border-2 border-dashed border-border p-2 text-caption font-medium text-muted-foreground"
-            >
-              {i + 1}
-            </div>
-          ))}
-        </div>
-        <RefImage
-          src="/refs/crazy8s-sketch-sheet.jpg"
-          caption="Eight rough screens in eight minutes: quantity over polish"
-          credit="Ignacio Valdes, Dribbble"
-          href="https://dribbble.com/shots/4008877-Crazy-Eights-Exercise"
-        />
-      </div>
-      <p className="mt-5 text-body">
-        <strong>Then:</strong> pick the strongest idea and <Highlight>rebuild that part in Figma</Highlight>.
-      </p>
-    </Slide>,
-
     <DividerSlide title="Share what changed" />,
-    <AssignmentSlide
-      title="No new brief. Improve what you have"
-      whatToBuild={[
-        <>
-          Take the feedback from today: your <strong>top 3 ranked issues</strong> and the design-system flags
-        </>,
-        <>
-          Rebuild those parts in Figma. <Highlight>Refine, don't restart</Highlight>, no new screens or features
-        </>,
-        <>
-          Come back next week with a <strong>before / after</strong> of what you changed and why
-        </>,
-      ]}
-    />,
+
+    // Closing: no new brief. The only work for next week is to implement today's critique.
+    <Slide>
+      <Eyebrow>Next week</Eyebrow>
+      <h2 className="mt-2 font-serif text-h2 tracking-tight">
+        Implement the critique from today
+      </h2>
+      <p className="mt-4 max-w-3xl text-h3 font-normal text-muted-foreground">
+        No new brief. Take the feedback from this session back into your Figma
+        file and put the fixes in.
+      </p>
+      <ul className="mt-6 max-w-3xl space-y-2">
+        {[
+          <>
+            Work from today's output: your <strong>ranked issues</strong> and the design-system flags
+          </>,
+          <>
+            <Highlight>Refine, don't restart.</Highlight> No new screens or features
+          </>,
+          <>
+            Come back with a <strong>before / after</strong> of what you changed and why
+          </>,
+        ].map((p, i) => (
+          <li key={i} className="flex items-baseline gap-2 text-body">
+            <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-foreground" />
+            <span>{p}</span>
+          </li>
+        ))}
+      </ul>
+    </Slide>,
   ],
 };

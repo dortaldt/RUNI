@@ -10,8 +10,23 @@ import { Printer, FileDown } from "lucide-react";
  *  - Per-card PDF button   -> that single activity as its own A4 handout,
  *    so you can send students just the part they need.
  *
- * Reachable at /cheatsheet/ai-critique.
+ * Reachable at /cheatsheet/critique.
  */
+
+/**
+ * The cards, in reading order. Drives both the body and the side anchor menu.
+ * Because the app runs under HashRouter, we can't use `#id` href anchors
+ * (they'd fight the router's hash), so the nav scrolls programmatically.
+ */
+const SECTIONS = [
+  { id: "ground-rules", label: "Ground rules" },
+  { id: "note-formula", label: "How to phrase a note" },
+  { id: "activity-1", label: "1 · Design system audit" },
+  { id: "ds-checklist", label: "Design system checklist" },
+  { id: "activity-2", label: "2 · UX pattern audit" },
+  { id: "activity-3", label: "3 · Quick ideation" },
+  { id: "receiving", label: "When you're reviewed" },
+];
 
 function Mark({ children }: { children: ReactNode }) {
   return <mark className="bg-accent px-1 text-accent-foreground">{children}</mark>;
@@ -32,15 +47,43 @@ function Lead({ cue, children }: { cue: string; children?: ReactNode }) {
   );
 }
 
-export function AiCritiqueCheatSheet() {
+export function CritiqueCheatSheet() {
   // When set, only the matching card prints (its own one-page handout).
   const [printId, setPrintId] = useState<string | null>(null);
+  // Which section the side menu highlights as you scroll.
+  const [activeId, setActiveId] = useState<string>(SECTIONS[0].id);
 
   useEffect(() => {
     if (!printId) return;
     window.print();
     setPrintId(null);
   }, [printId]);
+
+  // Highlight the section nearest the top of the viewport.
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .sort(
+            (a, b) => a.boundingClientRect.top - b.boundingClientRect.top
+          );
+        if (visible[0]) setActiveId(visible[0].target.id);
+      },
+      { rootMargin: "-15% 0px -70% 0px", threshold: 0 }
+    );
+    SECTIONS.forEach(({ id }) => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+    return () => observer.disconnect();
+  }, []);
+
+  function scrollToSection(id: string) {
+    document
+      .getElementById(id)
+      ?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
 
   function Card({
     id,
@@ -55,7 +98,8 @@ export function AiCritiqueCheatSheet() {
   }) {
     return (
       <div
-        className={`cheat-card break-inside-avoid rounded-lg border bg-card p-5 ${
+        id={id}
+        className={`cheat-card scroll-mt-6 break-inside-avoid rounded-lg border bg-card p-5 ${
           id === printId ? "print-keep" : ""
         }`}
       >
@@ -78,7 +122,7 @@ export function AiCritiqueCheatSheet() {
 
   return (
     <main
-      className={`cheat-sheet mx-auto max-w-4xl px-8 py-10 print:py-4 ${
+      className={`cheat-sheet mx-auto w-full max-w-7xl px-8 py-10 print:py-4 ${
         printId ? "printing-one" : ""
       }`}
     >
@@ -103,7 +147,34 @@ export function AiCritiqueCheatSheet() {
         </button>
       </header>
 
-      <div className="mt-6 grid gap-4 md:grid-cols-2 md:items-start">
+      <div className="mt-6 flex gap-10">
+        {/* Side anchor menu. Hidden on small screens and when printing. */}
+        <aside className="hidden w-52 shrink-0 lg:block print:hidden">
+          <nav className="sticky top-8" aria-label="Sections">
+            <p className="mb-2 px-3 text-caption font-medium uppercase tracking-widest text-muted-foreground">
+              On this page
+            </p>
+            <ul className="space-y-0.5">
+              {SECTIONS.map(({ id, label }) => (
+                <li key={id}>
+                  <button
+                    onClick={() => scrollToSection(id)}
+                    aria-current={activeId === id ? "true" : undefined}
+                    className={`block w-full rounded-md border-l-2 px-3 py-1.5 text-left text-caption transition-colors ${
+                      activeId === id
+                        ? "border-accent bg-muted font-medium text-foreground"
+                        : "border-transparent text-muted-foreground hover:bg-muted hover:text-foreground"
+                    }`}
+                  >
+                    {label}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </aside>
+
+        <div className="min-w-0 flex-1 space-y-4">
         <Card
           id="ground-rules"
           title="Ground rules for critique"
@@ -410,6 +481,7 @@ export function AiCritiqueCheatSheet() {
             </Lead>
           </ul>
         </Card>
+        </div>
       </div>
 
       <footer className="mt-6 break-inside-avoid border-t pt-3 text-caption text-muted-foreground">

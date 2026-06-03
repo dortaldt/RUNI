@@ -3,15 +3,14 @@
  * defined in `plugins/slide-editor.ts`. Dev-only — there is no server to write
  * to in a production build, so callers should gate on `import.meta.env.DEV`.
  */
-export async function saveSlideEdit(
-  original: string,
-  replacement: string,
-): Promise<{ ok: boolean; file?: string; error?: string }> {
+type SaveResult = { ok: boolean; file?: string; error?: string };
+
+async function postSlide(payload: object): Promise<SaveResult> {
   try {
     const res = await fetch("/__save-slide", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ original, replacement }),
+      body: JSON.stringify(payload),
     });
     const data = await res.json();
     return res.ok
@@ -20,4 +19,13 @@ export async function saveSlideEdit(
   } catch (err) {
     return { ok: false, error: String(err) };
   }
+}
+
+export function saveSlideEdit(original: string, replacement: string) {
+  return postSlide({ original, replacement });
+}
+
+/** Remove the whole array element (bullet + icon) this text belongs to. */
+export function deleteSlideItem(original: string) {
+  return postSlide({ original, op: "delete" });
 }

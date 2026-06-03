@@ -18,9 +18,10 @@ The interface-inventory gallery ships three real, attributed images, framed as p
 
 Two activity slides now carry a reference visual beside their steps (via the `ActivitySlide` `figure`
 prop, two-column layout):
-- `heuristic-eval-template.png` -> a FigJam board to walk a flow against Nielsen's 10 and log each issue
-  with a fix (Activity 2). Source: Vincenzo Sole, Dribbble
-  (https://dribbble.com/shots/23128035-Heuristic-Evaluation-Template).
+- `ux-audit-case-study.png` -> a real checkout UX audit: the 10 heuristics run on the flow, issues
+  plotted and ranked by severity (a worked artifact, not a blank template). Beside Activity 2's steps.
+  Source: Stanislav Stefaniuk, Dribbble (https://dribbble.com/shots/20945867--2020-UX-Audit-Case-Study).
+  (Replaced the earlier `heuristic-eval-template.png` template-advert shot.)
 - `crazy8s-sketch-sheet.jpg` -> eight rough screens sketched fast, quantity over polish (Activity 3,
   beside the 8-box worksheet). Source: Ignacio Valdes, Dribbble
   (https://dribbble.com/shots/4008877-Crazy-Eights-Exercise).
