@@ -108,7 +108,7 @@ export const week9 = {
           },
           {
             kicker: "Pass 2 · 20 min",
-            name: "Audit a flow",
+            name: "Audit the design patterns",
             steps: ["3. Review another pair's flow", "4. Audit the design patterns"],
           },
         ].map((p, i) => (
