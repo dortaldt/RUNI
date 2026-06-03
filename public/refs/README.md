@@ -6,12 +6,24 @@ Drop image files here and they appear automatically in the deck (and the PDF). T
 exists, the slide shows a tidy placeholder naming the file to add, so nothing breaks.
 
 ## "Design sprint (ish)" workshop deck (resolved, real images)
-The interface-inventory gallery ships two real, attributed images, framed as a before/after:
+The interface-inventory gallery ships three real, attributed images, framed as problem then system:
 - `pnc-button-inventory.jpg` -> PNC's many inconsistent button styles on one site.
   Source: Brad Frost, Interface Inventory (https://bradfrost.com/blog/post/interface-inventory/).
 - `dribbble-component-sheet.png` -> a real design-system button sheet: one button, every state and
   variant, defined once. Source: Shitij Nain, Dribbble
   (https://dribbble.com/shots/21073052-Design-System-Component-Buttons).
+- `button-system-cheatsheet.png` -> one button across the full set (filled, outlined, text, disabled,
+  FAB), the emphasis ladder defined once. Source: Roman Kamushken for Setproduct, Dribbble
+  (https://dribbble.com/shots/14797587-Material-design-buttons-UI-Figma-templates).
+
+Two activity slides now carry a reference visual beside their steps (via the `ActivitySlide` `figure`
+prop, two-column layout):
+- `heuristic-eval-template.png` -> a FigJam board to walk a flow against Nielsen's 10 and log each issue
+  with a fix (Activity 2). Source: Vincenzo Sole, Dribbble
+  (https://dribbble.com/shots/23128035-Heuristic-Evaluation-Template).
+- `crazy8s-sketch-sheet.jpg` -> eight rough screens sketched fast, quantity over polish (Activity 3,
+  beside the 8-box worksheet). Source: Ignacio Valdes, Dribbble
+  (https://dribbble.com/shots/4008877-Crazy-Eights-Exercise).
 
 The pattern-audit "what good patterns look like" gallery uses three more real Dribbble shots:
 - `empty-state-traveloka.png` -> empty/error states that name the problem and give a next step.

@@ -264,6 +264,7 @@ export function ActivitySlide({
   steps,
   output,
   link,
+  figure,
 }: {
   index: number;
   title: string;
@@ -272,7 +273,25 @@ export function ActivitySlide({
   steps: ReactNode[];
   output: ReactNode;
   link?: { label: string; href: string };
+  // Optional reference visual shown beside the steps (right column).
+  figure?: { src?: string; caption: string; credit?: string; href?: string };
 }) {
+  const body = (
+    <>
+      <ol className="mt-5 space-y-2">
+        {steps.map((s, i) => (
+          <li key={i} className="flex items-baseline gap-3 text-body">
+            <span className="font-semibold text-foreground">{i + 1}.</span>
+            <span>{s}</span>
+          </li>
+        ))}
+      </ol>
+      <p className="mt-5 text-body">
+        <span className="font-semibold">Output: </span>
+        {output}
+      </p>
+    </>
+  );
   return (
     <Slide>
       <div className="flex items-center gap-3">
@@ -282,18 +301,14 @@ export function ActivitySlide({
         </span>
       </div>
       <h2 className="mt-2 font-serif text-h2 tracking-tight">{title}</h2>
-      <ol className="mt-5 max-w-3xl space-y-2">
-        {steps.map((s, i) => (
-          <li key={i} className="flex items-baseline gap-3 text-body">
-            <span className="font-semibold text-foreground">{i + 1}.</span>
-            <span>{s}</span>
-          </li>
-        ))}
-      </ol>
-      <p className="mt-5 max-w-3xl text-body">
-        <span className="font-semibold">Output: </span>
-        {output}
-      </p>
+      {figure ? (
+        <div className="mt-2 grid grid-cols-[1fr_minmax(0,40%)] items-start gap-10">
+          <div className="max-w-2xl">{body}</div>
+          <RefImage {...figure} />
+        </div>
+      ) : (
+        <div className="max-w-3xl">{body}</div>
+      )}
       <div className="absolute bottom-6 left-12 flex items-center gap-5 text-caption text-muted-foreground">
         {method && (
           <span>
@@ -380,12 +395,18 @@ export function RefImage({
 }) {
   const [failed, setFailed] = useState(false);
   const showImg = src && !failed;
+  // Root-relative srcs (e.g. "/refs/foo.png") must be prefixed with Vite's base
+  // URL or they 404 when deployed under a base path (e.g. GitHub Pages "/RUNI/").
+  const resolvedSrc =
+    src && src.startsWith("/")
+      ? import.meta.env.BASE_URL.replace(/\/$/, "") + src
+      : src;
   return (
     <figure className="flex flex-col">
       <div className="aspect-[4/3] w-full overflow-hidden rounded-lg bg-muted">
         {showImg ? (
           <img
-            src={src}
+            src={resolvedSrc}
             alt={caption}
             onError={() => setFailed(true)}
             className="h-full w-full object-cover"

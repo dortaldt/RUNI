@@ -10,6 +10,7 @@ import {
   DividerSlide,
   AssignmentSlide,
   Highlight,
+  RefImage,
 } from "@/slides/templates";
 
 /**
@@ -37,10 +38,10 @@ export const workshopAiPeerReview = {
       title="Three ways to tighten your work"
       items={[
         <>
-          <strong>Audit your design system</strong>, what's inconsistent? (15 min)
+          Audit your<strong> design system</strong>, what's inconsistent? (15 min)
         </>,
         <>
-          <strong>Audit a flow</strong> with another pair, what's confusing? (20 min)
+          Audit<strong> </strong>a<strong> flow</strong> with another pair, what's confusing? (20 min)
         </>,
         <>
           <strong>Ideate fixes</strong> fast, then apply one (15 min)
@@ -105,7 +106,7 @@ export const workshopAiPeerReview = {
       }
     />,
     <GallerySlide
-      title="From inventory to system"
+      title="Create an inventory"
       intro="Pull every instance of one component onto a board. Side by side, the inconsistencies you miss screen by screen are easy to spot. Then consolidate to one component with defined states."
       images={[
         {
@@ -119,6 +120,12 @@ export const workshopAiPeerReview = {
           caption: "The fix: one button, every state and variant, defined once",
           credit: "Shitij Nain, Dribbble",
           href: "https://dribbble.com/shots/21073052-Design-System-Component-Buttons",
+        },
+        {
+          src: "/refs/button-system-cheatsheet.png",
+          caption: "One button across the full set: filled, outlined, text, disabled, and the FAB",
+          credit: "Roman Kamushken for Setproduct, Dribbble",
+          href: "https://dribbble.com/shots/14797587-Material-design-buttons-UI-Figma-templates",
         },
       ]}
     />,
@@ -192,6 +199,12 @@ export const workshopAiPeerReview = {
         </>
       }
       link={{ label: "Heuristic + AI checklist", href: "/cheatsheet/ai-critique" }}
+      figure={{
+        src: "/refs/heuristic-eval-template.png",
+        caption: "Walk the flow against Nielsen's 10, then log each issue with a fix",
+        credit: "Vincenzo Sole, Dribbble",
+        href: "https://dribbble.com/shots/23128035-Heuristic-Evaluation-Template",
+      }}
     />,
     <ChecklistSlide
       title="Audit the design patterns"
@@ -208,8 +221,8 @@ export const workshopAiPeerReview = {
         {
           label: "Navigation & flow",
           items: [
-            "The user always knows where they are and how to go back",
-            "Same navigation pattern across screens (consistency)",
+            <>The user always knows where they are and how to go <strong>back</strong></>,
+            <>Same <strong>navigation</strong> pattern across screens (consistency)</>,
             "One clear primary next step per screen",
             "Undo, cancel, and a clear exit are always available",
           ],
@@ -274,15 +287,23 @@ export const workshopAiPeerReview = {
         Take your top issue and frame it as "How might we...?" Then sketch one idea per box, a minute each.
         Keep them rough; aim for quantity, not polish.
       </p>
-      <div className="mt-5 grid grid-cols-4 gap-3">
-        {Array.from({ length: 8 }).map((_, i) => (
-          <div
-            key={i}
-            className="flex h-24 items-start rounded-md border-2 border-dashed border-border p-2 text-caption font-medium text-muted-foreground"
-          >
-            {i + 1}
-          </div>
-        ))}
+      <div className="mt-5 grid grid-cols-[1fr_minmax(0,32%)] items-start gap-8">
+        <div className="grid grid-cols-4 gap-3">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <div
+              key={i}
+              className="flex h-24 items-start rounded-md border-2 border-dashed border-border p-2 text-caption font-medium text-muted-foreground"
+            >
+              {i + 1}
+            </div>
+          ))}
+        </div>
+        <RefImage
+          src="/refs/crazy8s-sketch-sheet.jpg"
+          caption="Eight rough screens in eight minutes: quantity over polish"
+          credit="Ignacio Valdes, Dribbble"
+          href="https://dribbble.com/shots/4008877-Crazy-Eights-Exercise"
+        />
       </div>
       <p className="mt-5 text-body">
         <strong>Then:</strong> pick the strongest idea and <Highlight>rebuild that part in Figma</Highlight>.
