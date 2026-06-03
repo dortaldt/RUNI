@@ -10,6 +10,7 @@ import {
   GallerySlide,
   DividerSlide,
   Highlight,
+  TitleWithIcon,
 } from "@/slides/templates";
 
 /**
@@ -33,14 +34,26 @@ export const week9 = {
       title="Design sprint (ish)"
       subtitle="Reviewing and refining your work in progress"
     />,
+    <Slide center>
+      <img
+        src={`${import.meta.env.BASE_URL.replace(/\/$/, "")}/refs/well-that-was-a-ride.png`}
+        alt="A plush toy car perched on someone's head"
+        className="mb-6 h-64 w-64 rounded-full object-cover"
+      />
+      <h2 className="font-serif text-display tracking-tight">Well that was a ride</h2>
+      <p className="text-h3 font-light">
+        <span className="line-through">Don't</span> <strong>Do</strong> try this at home
+      </p>
+    </Slide>,
     <AgendaSlide
+      icon="/refs/start-grid.png"
       title="Two ways to tighten your work"
       items={[
         <>
           Audit your<strong> design system</strong>, what's inconsistent? (15 min)
         </>,
         <>
-          Audit<strong> </strong>a<strong> flow</strong> with another pair, what's confusing? (20 min)
+          Audit a <strong>flow</strong> with another pair, what's confusing? (20 min)
         </>,
         <>
           Then <strong>rebuild one part</strong> in Figma
@@ -48,6 +61,7 @@ export const week9 = {
       ]}
     />,
     <ConceptSlide
+      icon="/refs/whistle.png"
       title="How we work today"
       definition={
         <>
@@ -69,7 +83,7 @@ export const week9 = {
           <strong>Everyone gives a note,</strong> and the pair being reviewed listens first, then picks what to act on
         </>,
         <>
-          Keep the <strong>cheat sheet</strong> open. Every step, checklist, and the AI checks live there
+          Keep the <strong>cheat sheet</strong> open. Every step and checklist lives there
         </>,
       ]}
     />,
@@ -77,9 +91,9 @@ export const week9 = {
     // A map of the session: two timeboxed passes, then fix one thing.
     <Slide>
       <Eyebrow>Today's process</Eyebrow>
-      <h2 className="mt-2 font-serif text-h2 tracking-tight">
+      <TitleWithIcon icon="/refs/tactics-clipboard.png" className="mt-2">
         Two passes, then fix one thing
-      </h2>
+      </TitleWithIcon>
       <p className="mt-2 max-w-3xl text-body text-muted-foreground">
         Each pass is timeboxed and ends with something concrete to act on. Then
         you turn one finding into a real change.
@@ -93,7 +107,7 @@ export const week9 = {
           },
           {
             kicker: "Pass 2 · 20 min",
-            name: "Audit a design patterns",
+            name: "Audit a flow",
             steps: ["3. Review another pair's flow", "4. Audit the design patterns"],
           },
         ].map((p, i) => (
@@ -137,6 +151,7 @@ export const week9 = {
     // Activity 1 spans two slides: the method, then a real checklist.
     <ActivitySlide
       index={1}
+      icon="/refs/magnifier.png"
       title="1. Inventory your interface"
       minutes="15 min, in your pair"
       method={{
@@ -244,7 +259,7 @@ export const week9 = {
           Run the heuristic checklist. Note <strong>every issue</strong> you hit, big or small
         </>,
         <>
-          Rate each issue <strong>0 to 4</strong> for severity (NN/g): 0 cosmetic, 4 catastrophe
+          Rate each issue <strong>0 to 4</strong> for severity (NN/g): 1 cosmetic, 4 catastrophe
         </>,
         <>
           Hand back the <strong>top issues, ranked</strong>. They decide what to fix first
@@ -256,12 +271,6 @@ export const week9 = {
         </>
       }
       link={{ label: "Critique checklist", href: "/cheatsheet/critique" }}
-      figure={{
-        src: "/refs/ux-audit-case-study.png",
-        caption: "A real checkout audit: Nielsen's 10 run on the flow, issues plotted and ranked by severity",
-        credit: "Stanislav Stefaniuk, Dribbble",
-        href: "https://dribbble.com/shots/20945867--2020-UX-Audit-Case-Study",
-      }}
     />,
     <ChecklistSlide
       title="4. Audit the design patterns"
@@ -302,7 +311,7 @@ export const week9 = {
           ],
         },
       ]}
-      source={<>Based on Nielsen's 10 usability heuristics (NN/g). AI checks on the cheat sheet</>}
+      source={<>Based on Nielsen's 10 usability heuristics (NN/g)</>}
     />,
     <GallerySlide
       title="What good patterns look like"

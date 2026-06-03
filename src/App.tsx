@@ -24,9 +24,16 @@ function IndexCard({ to, title }: { to: string; title: string }) {
 function Home() {
   return (
     <main className="mx-auto w-full max-w-6xl px-6 py-16 lg:py-24">
-      <p className="text-caption font-medium uppercase tracking-widest text-muted-foreground">
-        RUNI · HCI
-      </p>
+      <div className="flex items-center gap-3">
+        <img
+          src={`${import.meta.env.BASE_URL.replace(/\/$/, "")}/refs/runi-logo.png`}
+          alt="Reichman University"
+          className="h-7 w-auto opacity-60 [filter:invert(1)]"
+        />
+        <p className="text-caption font-medium uppercase tracking-widest text-muted-foreground">
+          HCI
+        </p>
+      </div>
       <h1 className="mt-2 max-w-4xl font-serif text-h1 tracking-tight">
         Design Patterns and Systems
       </h1>

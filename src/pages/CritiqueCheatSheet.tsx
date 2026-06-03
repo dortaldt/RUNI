@@ -2,8 +2,8 @@ import { useEffect, useState, type ReactNode } from "react";
 import { Printer, FileDown } from "lucide-react";
 
 /**
- * Workshop cheat sheet: the one-page companion students keep open through all
- * three activities (design system audit, UX pattern audit, quick ideation).
+ * Workshop cheat sheet: the one-page companion students keep open through both
+ * audits (design system audit, UX pattern audit), then fixing one thing.
  *
  * Two ways to export:
  *  - "Print all" (header) -> the full sheet as one PDF.
@@ -24,7 +24,6 @@ const SECTIONS = [
   { id: "activity-1", label: "1 · Design system audit" },
   { id: "ds-checklist", label: "Design system checklist" },
   { id: "activity-2", label: "2 · UX pattern audit" },
-  { id: "activity-3", label: "3 · Quick ideation" },
   { id: "receiving", label: "When you're reviewed" },
 ];
 
@@ -135,7 +134,7 @@ export function CritiqueCheatSheet() {
             Refine your work in progress
           </h1>
           <p className="mt-1 text-[15px] text-muted-foreground">
-            Three proven, timeboxed audits, then fix one thing. Keep this open
+            Two proven, timeboxed audits, then fix one thing. Keep this open
             the whole session. Each card downloads on its own.
           </p>
         </div>
@@ -174,7 +173,7 @@ export function CritiqueCheatSheet() {
           </nav>
         </aside>
 
-        <div className="min-w-0 flex-1 space-y-4">
+        <div className="grid min-w-0 flex-1 grid-cols-1 gap-4 xl:grid-cols-2 xl:items-start">
         <Card
           id="ground-rules"
           title="Ground rules for critique"
@@ -251,7 +250,7 @@ export function CritiqueCheatSheet() {
           kicker={
             <Src>
               Method: Interface Inventory (Brad Frost) + 18F Interface Audit. In
-              your pair. Timebox: 20 min.
+              your pair. Timebox: 15 min.
             </Src>
           }
         >
@@ -340,7 +339,8 @@ export function CritiqueCheatSheet() {
               enabled, hover, focus, pressed, disabled. M3 state layers.
             </Lead>
             <Lead cue="Touch targets at least 48x48dp">
-              even when the icon is 24dp. M3 accessibility; WCAG 2.2, 2.5.8.
+              even when the icon is 24dp. M3 accessibility (WCAG 2.5.8 sets a
+              24px floor; 48dp is the comfortable target).
             </Lead>
             <Lead cue="One icon set, one size and weight,">
               and consistent elevation levels.
@@ -394,7 +394,7 @@ export function CritiqueCheatSheet() {
           </ol>
           <p className="font-semibold">Rate each issue (NN/g severity)</p>
           <ul className="list-disc space-y-1.5 pl-5">
-            <Lead cue="0-1 cosmetic,">2 minor, 3 major,</Lead>
+            <Lead cue="0 not a problem,">1 cosmetic, 2 minor, 3 major,</Lead>
             <Lead cue="4 catastrophe.">Fix the 3s and 4s first.</Lead>
           </ul>
           <p className="font-semibold">If the flow has AI, also check</p>
@@ -420,37 +420,6 @@ export function CritiqueCheatSheet() {
               in language, defaults, and examples. HAX G6.
             </Lead>
           </ul>
-        </Card>
-
-        <Card
-          id="activity-3"
-          title="Activity 3 · Quick ideation"
-          kicker={
-            <Src>
-              Method: Crazy 8s (Google Design Sprint Kit), framed with "How might
-              we" (IDEO). Solo, then share. Timebox: 8 min sketch.
-            </Src>
-          }
-        >
-          <ol className="list-decimal space-y-1.5 pl-5">
-            <Lead cue="Frame the problem.">
-              Take your <Mark>#1 issue</Mark> and write it as "How might we…?"
-              Keep it open, not a solution in disguise.
-            </Lead>
-            <Lead cue="Fold paper into 8.">
-              Sketch 8 ideas in 8 minutes, one per panel, one minute each.
-            </Lead>
-            <Lead cue="Rough is the point.">
-              No erasing, no judging, keep the pen moving.
-            </Lead>
-            <Lead cue="Pick the strongest,">
-              then rebuild just that part in Figma.
-            </Lead>
-          </ol>
-          <p className="text-caption text-muted-foreground">
-            <strong>Output:</strong> 8 quick sketches and one chosen direction to
-            prototype.
-          </p>
         </Card>
 
         <Card
@@ -509,12 +478,6 @@ export function CritiqueCheatSheet() {
               Interface Inventory
             </SrcLink>
             , Brad Frost.
-          </li>
-          <li>
-            <SrcLink href="https://designsprintkit.withgoogle.com/methodology/phase3-sketch/crazy-8s">
-              Crazy 8s
-            </SrcLink>
-            , Google Design Sprint Kit.
           </li>
           <li>
             <SrcLink href="https://www.microsoft.com/en-us/haxtoolkit/">

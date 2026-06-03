@@ -50,6 +50,65 @@ export function Source({ children }: { children: ReactNode }) {
   );
 }
 
+/**
+ * A small decorative line-art icon sized to sit inline to the LEFT of a slide
+ * title (height ~matches the h2 cap height). Pass a root-relative `src`
+ * (e.g. "/refs/whistle.png"); transparent PNGs sit cleanly on the background.
+ * Purely decorative — hidden from screen readers by default. Use via the `icon`
+ * prop on a title template, or `<TitleWithIcon>` for custom slides.
+ */
+export function SlideIcon({
+  src,
+  alt = "",
+  className,
+}: {
+  src: string;
+  alt?: string;
+  className?: string;
+}) {
+  const resolvedSrc = src.startsWith("/")
+    ? import.meta.env.BASE_URL.replace(/\/$/, "") + src
+    : src;
+  return (
+    <img
+      src={resolvedSrc}
+      alt={alt}
+      aria-hidden={alt === "" ? true : undefined}
+      className={cn(
+        "pointer-events-none h-[5.4rem] w-auto shrink-0 object-contain",
+        className,
+      )}
+    />
+  );
+}
+
+/**
+ * A slide title (h2) with an optional decorative icon. The title stays flush with
+ * the content's left edge; the icon hangs out into the left margin (overflowing
+ * left) so it never pushes the title inward.
+ */
+export function TitleWithIcon({
+  children,
+  icon,
+  className,
+}: {
+  children: ReactNode;
+  icon?: string;
+  className?: string;
+}) {
+  return (
+    <div className={cn("relative", className)}>
+      {icon && (
+        <SlideIcon
+          src={icon}
+          className="absolute right-full top-1/2 mr-3 -translate-y-1/2"
+        />
+      )}
+      <h2 className="font-serif text-h2 tracking-tight">{children}</h2>
+    </div>
+  );
+}
+
 /** Highlighter mark - the brand yellow behind dark text. Use to spotlight words. */
 export function Highlight({ children }: { children: ReactNode }) {
   return (
@@ -101,11 +160,23 @@ export function RecapSlide({
   );
 }
 
-export function AgendaSlide({ title, items }: { title?: string; items: ReactNode[] }) {
+export function AgendaSlide({
+  title,
+  items,
+  icon,
+}: {
+  title?: string;
+  items: ReactNode[];
+  icon?: string;
+}) {
   return (
     <Slide>
       <Eyebrow>Today</Eyebrow>
-      {title && <h2 className="mt-2 font-serif text-h2 tracking-tight">{title}</h2>}
+      {title && (
+        <TitleWithIcon icon={icon} className="mt-2">
+          {title}
+        </TitleWithIcon>
+      )}
       <ol className="mt-6 space-y-4">
         {items.map((item, i) => (
           <li key={i} className="flex items-baseline gap-3 text-h3">
@@ -123,15 +194,17 @@ export function ConceptSlide({
   definition,
   points,
   source,
+  icon,
 }: {
   title: string;
   definition?: ReactNode;
   points?: ReactNode[];
   source?: ReactNode;
+  icon?: string;
 }) {
   return (
     <Slide>
-      <h2 className="font-serif text-h2 tracking-tight">{title}</h2>
+      <TitleWithIcon icon={icon}>{title}</TitleWithIcon>
       {definition && (
         <p className="mt-4 max-w-3xl text-h3 font-normal text-muted-foreground">
           {definition}
@@ -265,6 +338,7 @@ export function ActivitySlide({
   output,
   link,
   figure,
+  icon,
 }: {
   index: number;
   title: string;
@@ -275,6 +349,9 @@ export function ActivitySlide({
   link?: { label: string; href: string };
   // Optional reference visual shown beside the steps (right column).
   figure?: { src?: string; caption: string; credit?: string; href?: string };
+  // Optional decorative line-art icon, left of the title. Hidden when a `figure`
+  // is set (the figure already carries the visual).
+  icon?: string;
 }) {
   const body = (
     <>
@@ -300,7 +377,9 @@ export function ActivitySlide({
           ⏱ {minutes}
         </span>
       </div>
-      <h2 className="mt-2 font-serif text-h2 tracking-tight">{title}</h2>
+      <TitleWithIcon icon={figure ? undefined : icon} className="mt-2">
+        {title}
+      </TitleWithIcon>
       {figure ? (
         <div className="mt-2 grid grid-cols-[1fr_minmax(0,40%)] items-start gap-10">
           <div className="max-w-2xl">{body}</div>

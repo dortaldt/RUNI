@@ -59,7 +59,7 @@ export const week1 = {
     />,
     <ConceptSlide
       title="Why design patterns?"
-      definition="Three audiences, three benefits."
+      definition="Who benefits, and how."
       points={[
         "Designers: consistency across flows; faster decisions; a shared language",
         "Users: familiar interactions reduce cognitive load; predictable behavior builds trust",
