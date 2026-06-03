@@ -11,6 +11,7 @@ import {
   DividerSlide,
   Highlight,
   TitleWithIcon,
+  ICON_RAIL,
 } from "@/slides/templates";
 
 /**
@@ -89,7 +90,7 @@ export const week9 = {
     />,
 
     // A map of the session: two timeboxed passes, then fix one thing.
-    <Slide>
+    <Slide className={ICON_RAIL}>
       <Eyebrow>Today's process</Eyebrow>
       <TitleWithIcon icon="/refs/tactics-clipboard.png" className="mt-2">
         Two passes, then fix one thing

@@ -51,6 +51,14 @@ export function Source({ children }: { children: ReactNode }) {
 }
 
 /**
+ * Left padding for a slide that carries a `SlideIcon`. Widens the gutter into a
+ * "rail" so the (doubled-size) icon hangs fully visible to the left of the title
+ * while the title and body shift right together and stay aligned with each other.
+ * Keep in sync with SlideIcon's height (rail ≥ icon width + gap).
+ */
+export const ICON_RAIL = "pl-[9.5rem]";
+
+/**
  * A small decorative line-art icon sized to sit inline to the LEFT of a slide
  * title (height ~matches the h2 cap height). Pass a root-relative `src`
  * (e.g. "/refs/whistle.png"); transparent PNGs sit cleanly on the background.
@@ -75,7 +83,7 @@ export function SlideIcon({
       alt={alt}
       aria-hidden={alt === "" ? true : undefined}
       className={cn(
-        "pointer-events-none h-[5.4rem] w-auto shrink-0 object-contain",
+        "pointer-events-none h-[6.4rem] w-auto shrink-0 object-contain",
         className,
       )}
     />
@@ -101,7 +109,7 @@ export function TitleWithIcon({
       {icon && (
         <SlideIcon
           src={icon}
-          className="absolute right-full top-1/2 mr-3 -translate-y-1/2"
+          className="absolute right-full top-1/2 -translate-y-1/2"
         />
       )}
       <h2 className="font-serif text-h2 tracking-tight">{children}</h2>
@@ -170,7 +178,7 @@ export function AgendaSlide({
   icon?: string;
 }) {
   return (
-    <Slide>
+    <Slide className={icon ? ICON_RAIL : undefined}>
       <Eyebrow>Today</Eyebrow>
       {title && (
         <TitleWithIcon icon={icon} className="mt-2">
@@ -203,7 +211,7 @@ export function ConceptSlide({
   icon?: string;
 }) {
   return (
-    <Slide>
+    <Slide className={icon ? ICON_RAIL : undefined}>
       <TitleWithIcon icon={icon}>{title}</TitleWithIcon>
       {definition && (
         <p className="mt-4 max-w-3xl text-h3 font-normal text-muted-foreground">
@@ -369,15 +377,16 @@ export function ActivitySlide({
       </p>
     </>
   );
+  const withIcon = !!icon && !figure;
   return (
-    <Slide>
+    <Slide className={withIcon ? ICON_RAIL : undefined}>
       <div className="flex items-center gap-3">
         <Eyebrow>Activity {index}</Eyebrow>
         <span className="rounded-md bg-accent px-3 py-1 text-caption font-semibold text-accent-foreground">
           ⏱ {minutes}
         </span>
       </div>
-      <TitleWithIcon icon={figure ? undefined : icon} className="mt-2">
+      <TitleWithIcon icon={withIcon ? icon : undefined} className="mt-2">
         {title}
       </TitleWithIcon>
       {figure ? (
@@ -388,7 +397,12 @@ export function ActivitySlide({
       ) : (
         <div className="max-w-3xl">{body}</div>
       )}
-      <div className="absolute bottom-6 left-12 flex items-center gap-5 text-caption text-muted-foreground">
+      <div
+        className={cn(
+          "absolute bottom-6 flex items-center gap-5 text-caption text-muted-foreground",
+          withIcon ? "left-[9.5rem]" : "left-12",
+        )}
+      >
         {method && (
           <span>
             Method:{" "}
