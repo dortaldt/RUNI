@@ -215,7 +215,7 @@ export const course: CourseManifest = {
     },
     {
       n: 9,
-      topic: "Layouts Across a Flow",
+      topic: "The Flow Is a Story",
       summary:
         "Designing the whole user journey across many screens. Start with the user's goal (why they open the app at all), map the flow, treat it as a story (setup to payoff, the Hook loop), and make many screens feel like one product. Frontal lecture; ends with the final-presentation brief.",
       driveMaterial: true,

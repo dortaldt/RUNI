@@ -21,21 +21,6 @@ export type Asset = MediaSpec & { caption: string };
 
 export const assets: Record<string, Asset> = {
   // ── Week 9: Layouts across a flow ──────────────────────────────
-  "week9.journeyMap": {
-    src: "/refs/nng-journey-map.png",
-    contain: true, // a dense, wide chart: show all of it, don't crop
-    caption:
-      "A customer journey map: \"Jumping Jamie\" switching mobile plans. Phases across the top; actions, thoughts, and an emotion line below; opportunities at the bottom",
-    credit: "Nielsen Norman Group",
-    href: "https://www.nngroup.com/articles/journey-mapping-101/",
-  },
-  "week9.loginFlow": {
-    src: "/refs/login-signup-flow.webp",
-    contain: true, // a dense chart: show all of it, don't crop
-    caption: "A login and signup flow chart: the happy path, the branches, the dead ends",
-    credit: "Dribbble", // TODO: confirm the author's name for attribution
-    href: "https://dribbble.com/shots/25331267-User-Flow-For-Mobile-App-Login-Signup",
-  },
   "week9.checkoutFlow": {
     src: "/refs/checkout-flow.svg",
     contain: true, // a flowchart: show the whole story, don't crop
@@ -47,13 +32,6 @@ export const assets: Record<string, Asset> = {
     contain: true, // grey-box wireframe: show all of it
     aspect: "16/10",
     caption: "A landing page in grey boxes: structure before any visual polish",
-  },
-  "week9.storyFlow": {
-    src: "/refs/salesforce-flow.webp", // TODO: drop a Salesforce lead→close flow (Mobbin) here
-    contain: true,
-    aspect: "4/3", // near-square shot; fills the side-by-side column
-    caption: "A real flow, screen by screen: a Salesforce rep turns a new lead into a closed deal",
-    credit: "add a real set (Salesforce via Mobbin)",
   },
   "week9.asanaPeak": {
     src: "/refs/asana-celebration.jpeg",
@@ -97,17 +75,12 @@ export const assets: Record<string, Asset> = {
     caption: "Gong, Deals: same nav and header, different content",
     credit: "Gong",
   },
-  "week9.graffiti": {
-    src: "/refs/berlin-graffiti.jpg",
-    caption: "Spotting this is the trigger to post it; the likes are the reward. The loop starts out here, in the user's world, before any app opens.",
-    credit: "Rikin Katyal, Unsplash",
-    href: "https://unsplash.com/photos/a-wall-with-graffiti-ILxNUIvDetM",
-  },
   "week9.customerMessage": {
-    src: "/refs/customer-message.png", // drop a phone DM / inbox screenshot: a customer asking about an order
+    src: "/refs/realworld-trigger.webp",
     contain: true,
-    caption: "The trigger: a customer's question lands, before the app is even open",
-    credit: "add a real screenshot",
+    caption: "The journey starts out in the user's day, phone in hand, before any app opens",
+    credit: "Mika Baumeister, Unsplash",
+    href: "https://unsplash.com/@mikabaumeister",
   },
   "week9.ipod": {
     src: "/refs/ipod-job.jpg",
@@ -123,10 +96,16 @@ export const assets: Record<string, Asset> = {
     href: "https://dribbble.com/shots/25845830-Onboarding-flow-with-microinteractions-for-saas-app-dashboard",
   },
   "week9.transition": {
-    src: "/refs/flow-transition-demo.mp4",
-    poster: "/refs/skeleton-loading-finance.png",
-    caption: "A screen-to-screen transition (drop a clip or paste a URL to play it live)",
-    credit: "add a real product clip",
+    src: "https://cdn.dribbble.com/userupload/46770976/file/103a25920f355a9587e73c7f91a78868.mp4",
+    aspect: "4/3", // matches the clip's native 3324×2494, so no crop or letterbox
+    caption: "A checkout in motion: shared elements move from screen to screen, so cart → payment → confirmation feels like one continuous place",
+    credit: "Dribbble",
+  },
+  "week9.stateByState": {
+    src: "/refs/state-by-state.mp4",
+    aspect: "3112/2160", // clip's native size; keep the ratio so it isn't cropped or letterboxed
+    caption: "One screen, every state: empty, loading, error, success, each one designed, not left to chance",
+    credit: "Dribbble",
   },
 };
 

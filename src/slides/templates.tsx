@@ -69,7 +69,7 @@ export function SlideTitle({
 }) {
   return (
     <div className={cn("border-b border-rule pb-3", className)}>
-      <h2 className="font-serif text-h2 tracking-tight">{children}</h2>
+      <h2 className="text-balance font-serif text-h2 font-bold tracking-tight">{children}</h2>
     </div>
   );
 }
@@ -154,7 +154,7 @@ export function TitleWithIcon({
           className="absolute right-full top-1/2 -translate-y-1/2"
         />
       )}
-      <h2 className="font-serif text-h2 tracking-tight">{children}</h2>
+      <h2 className="text-balance font-serif text-h2 font-bold tracking-tight">{children}</h2>
     </div>
   );
 }
@@ -193,7 +193,7 @@ export function Lead({
   return (
     <div className={cn("max-w-2xl space-y-5", className)}>
       {sentences.map((s, i) => (
-        <p key={i} className="text-h3 font-normal text-muted-foreground">
+        <p key={i} className="font-serif text-h3 font-normal text-muted-foreground">
           {s}
         </p>
       ))}
@@ -205,21 +205,33 @@ export function TitleSlide({
   course,
   title,
   subtitle,
+  illustration,
+  illustrationAlt,
 }: {
   course: string;
   title: string;
   subtitle?: string;
+  /** Optional hero illustration (e.g. an SVG) anchored to the bottom edge. */
+  illustration?: string;
+  illustrationAlt?: string;
 }) {
   return (
-    <Slide center>
+    <Slide center className={cn(illustration && "justify-start pt-[14vh]")}>
       <Eyebrow>{course}</Eyebrow>
-      <h1 className="mt-3 max-w-4xl font-serif text-h1 tracking-tight">{title}</h1>
+      <h1 className="mt-3 max-w-4xl text-balance font-serif text-h1 font-bold tracking-tight">{title}</h1>
       {subtitle && (
-        <p className="mt-3 max-w-4xl text-balance text-h3 font-normal text-muted-foreground">
+        <p className="mt-3 max-w-4xl text-balance font-serif text-h3 font-normal text-muted-foreground">
           {subtitle}
         </p>
       )}
       <span className="mt-6 h-px w-24 bg-rule" />
+      {illustration && (
+        <img
+          src={resolveSrc(illustration)}
+          alt={illustrationAlt ?? ""}
+          className="pointer-events-none absolute inset-x-0 bottom-0 mx-auto max-h-[56%] w-auto select-none"
+        />
+      )}
     </Slide>
   );
 }
@@ -291,7 +303,7 @@ export function ConceptSlide({
     <Slide className={icon ? ICON_RAIL : undefined}>
       <TitleWithIcon icon={icon}>{title}</TitleWithIcon>
       {definition && (
-        <p className="mt-4 max-w-3xl text-h3 font-normal text-muted-foreground">
+        <p className="mt-4 max-w-3xl font-serif text-h3 font-normal text-muted-foreground">
           {definition}
         </p>
       )}
@@ -520,7 +532,7 @@ export function DividerSlide({
 }) {
   return (
     <Slide center>
-      <h2 className="font-serif text-display tracking-tight">{title}</h2>
+      <h2 className="text-balance font-serif text-display font-bold tracking-tight">{title}</h2>
       {pattern && (
         <p className="mt-6 text-caption font-medium uppercase tracking-widest text-muted-foreground">
           Linked pattern

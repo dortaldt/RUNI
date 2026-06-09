@@ -2,7 +2,7 @@
    sans) for body + labels; Newsreader (a screen-designed news serif) for
    headlines. Replaces Geist + DM Serif Display for a newspaper, not fashion-mag,
    feel. */
-@import url("https://fonts.googleapis.com/css2?family=Libre+Franklin:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Libre+Franklin:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,400&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -59,6 +59,11 @@
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
     -webkit-font-smoothing: antialiased;
+    /* Let Newsreader use its display optical cut at large sizes (higher stroke
+       contrast — the Cheltenham/Imperial "front-page" sparkle), and turn on
+       ligatures/kerning so headlines set as tightly as real newspaper type. */
+    font-optical-sizing: auto;
+    text-rendering: optimizeLegibility;
   }
   /* Keywords: <strong> renders bold + full-ink so it pops out of muted body text. */
   strong {
