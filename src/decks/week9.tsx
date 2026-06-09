@@ -408,6 +408,97 @@ function FlowExampleSlide({
   );
 }
 
+// The four steps hiding between Sarah's message and her reply. Rendered as
+// nodes on a line that draws itself left to right (same trigger → goal axis
+// the story arc reuses later), labels alternating above/below the line.
+const HIDDEN_STEPS: { t: string; d: string }[] = [
+  { t: "Open the app", d: "one tap from the chat" },
+  { t: "Check Saturday", d: "the calendar: one slot left" },
+  { t: "Price the cake", d: "gluten-free, from her list" },
+  { t: "Write the quote", d: "date, price, pickup time" },
+];
+
+/**
+ * Cold open, part two: the hidden path. The line draws from the incoming
+ * message bubble to the reply bubble; the four steps pop in as it passes.
+ * Sets the stage for the whole lecture (the path between a trigger and its
+ * goal is the flow) and foreshadows the story arc's trigger → goal axis.
+ */
+function HiddenStepsSlide() {
+  return (
+    <Slide className="flex flex-col">
+      <Eyebrow>One minute later</Eyebrow>
+      <TitleWithIcon className="mt-2">Between the message and the reply</TitleWithIcon>
+      <p className="mt-2 max-w-3xl text-body text-muted-foreground">
+        Sarah answers in under a minute. Inside that minute there's a path, and every step of it is
+        a screen.
+      </p>
+      <div className="relative mt-2 flex min-h-0 flex-1 items-center px-2">
+        {/* the path, drawn message → reply behind the bubbles and nodes.
+            A plain div growing via scaleX: SVG dasharray rendered the line as
+            dashes here. Inset by half a bubble width so the ends stay hidden
+            behind the two bubbles. */}
+        <div className="absolute left-28 right-28 top-[calc(50%-1px)] h-[2px]" aria-hidden>
+          <div
+            className="line-draw h-full w-full bg-foreground"
+            style={{ animationDelay: "0.2s" }}
+          />
+        </div>
+        {/* incoming message: the trigger */}
+        <div
+          className="arc-fade relative z-10 w-56 shrink-0 rounded-2xl rounded-bl-sm border bg-card px-4 py-3"
+          style={{ animationDelay: "0.1s" }}
+        >
+          <p className="text-caption leading-relaxed">
+            Can you do a gluten-free cake for Saturday?
+          </p>
+          <p className="mt-1 text-[0.7rem] text-muted-foreground">9:12</p>
+        </div>
+        {/* the four hidden steps */}
+        {HIDDEN_STEPS.map((s, i) => {
+          const above = i % 2 === 0;
+          const delay = `${0.6 + i * 0.35}s`;
+          return (
+            <div key={s.t} className="relative flex h-full flex-1 items-center justify-center">
+              <span
+                className="arc-beat z-10 flex h-8 w-8 items-center justify-center rounded-full border border-foreground bg-background text-caption font-semibold"
+                style={{ animationDelay: delay }}
+              >
+                {i + 1}
+              </span>
+              <div
+                className={`arc-beat absolute w-44 text-center ${
+                  above ? "bottom-[calc(50%+1.9rem)]" : "top-[calc(50%+1.9rem)]"
+                }`}
+                style={{ animationDelay: delay }}
+              >
+                <p className="text-caption font-semibold">{s.t}</p>
+                <p className="text-caption text-muted-foreground">{s.d}</p>
+              </div>
+            </div>
+          );
+        })}
+        {/* the reply: goal met, before they ask another baker */}
+        <div
+          className="arc-beat relative z-10 w-56 shrink-0 rounded-2xl rounded-br-sm bg-accent px-4 py-3 text-accent-foreground"
+          style={{ animationDelay: "2.1s" }}
+        >
+          <p className="text-caption leading-relaxed">
+            Yes! Gluten-free chocolate, ₪380. Pickup Saturday from 10:00?
+          </p>
+          <p className="mt-1 text-right text-[0.7rem] opacity-70">9:13 ✓✓</p>
+        </div>
+      </div>
+      <p
+        className="arc-fade mx-auto max-w-4xl text-balance pb-2 text-center font-serif text-h3"
+        style={{ animationDelay: "2.7s" }}
+      >
+        That path is the <Highlight>flow</Highlight>, and today we design it on purpose.
+      </p>
+    </Slide>
+  );
+}
+
 export const week9 = {
   n: 9,
   slides: [
@@ -431,6 +522,8 @@ export const week9 = {
         The journey has already started. Sarah's app isn't open yet.
       </p>
     </Slide>,
+
+    <HiddenStepsSlide />,
 
     // Recap the most recent class — the in-class redesign workshop
     // (interface inventory + heuristic eval). The PNC button inventory image
@@ -1046,62 +1139,64 @@ export const week9 = {
     // 1. Title
     "Frame it in one line: today is about the whole journey, the sequence of screens a user moves through to reach a goal. By the end you'll know how to make your flow better, and you'll have the brief for your final presentation. Two products ride along the whole class: Spotify and Gong, one consumer, one B2B, and Gong is where you'll present next month.",
     // 2. Cold open: the customer message
-    "Cold open, before any agenda. Read the message off the slide and let it sit for a beat. Sarah is the small-business owner you've been designing for all semester. Ask the room: where does her journey start? Most will say the home screen. It starts here, out in her day, with the app still closed. Everything today is about what happens between this message and her reply. We pick this exact message back up in a few slides and turn it into a job.",
-    // 3. Recap
+    "Cold open, before any agenda. Read the message off the slide and let it sit for a beat. Sarah is the small-business owner you've been designing for all semester. Ask the room: where does her journey start? Most will say the home screen. It starts here, out in her day, with the app still closed. Then advance: let's watch what happens next.",
+    // 3. The hidden path
+    "Let it play: the line draws from her message to her reply, and four steps pop in along the way: open the app, check Saturday, price the cake, write the quote. Then land the numbers: the message came in at 9:12, the reply went out at 9:13, and she won the customer before they asked another baker. Each of those four steps is a screen in the product you're building. That's the stage for today: the path between a trigger and its goal is the flow, and we design it on purpose. Quiet foreshadow: this same left-to-right axis, trigger on the left, goal met on the right, comes back as the story arc after the break. We also pick this exact message back up in a few slides and turn it into a job.",
+    // 4. Recap
     "Quick callback to the in-class redesign workshop: the interface inventory and heuristic eval you ran on your own product. Point at the PNC inventory on screen, that's what yours looked like. Then set the level: most of you already have a sequence of screens by now. Good. Today we make yours better.",
-    // 4. Agenda
+    // 5. Agenda
     "Walk the plan. The center of gravity is the middle: making many screens feel like one product, with states. The goal and the story framing get us there; the prototype makes it real. We end with the final brief.",
-    // 5. Thesis
+    // 6. Thesis
     "Open with the book analogy: a novel can have unforgettable characters and a plot that goes nowhere, the writing is strong and you still put it down. Your screens are the characters; the flow is the plot. So the question today is when a flow is actually good. Hand them the three tests up front, because they are the spine of today: it starts from the user's goal (Part 1), it moves like a story with a setup and a payoff (Part 2), and it feels like one product across every screen (Part 3). After that we make it real and test it with a prototype, then the final brief. Point at the clip looping on the right: a 12-step onboarding where the progress bar and microinteractions make twelve screens feel like one journey. Ask: who has used an app where each screen was fine but the whole thing felt confusing? That's a flow problem, and that's what we fix today.",
-    // 6. Divider: start from the goal
+    // 7. Divider: start from the goal
     "Section break. The point I most want them to take: the journey begins out in the user's life, before your app opens, with a trigger and a goal.",
-    // 7. The trigger & the job
+    // 8. The trigger & the job
     "Use their own product, the small-business app. The trigger lives out in the owner's day: the cold open's message, 'Can you do a gluten-free cake for Saturday?', now back on screen. That message is where the journey really starts, before the app is even open. Then name the job: When [situation], I want to [motivation], so I can [outcome]. For Sarah: when that message comes in, she wants to check the calendar and quote a price in under a minute, so she answers before they ask another baker. The two ends carry the weight: 'when' sets where the flow starts, 'so I can' sets when it's done, the customer has their answer. The famous version, if you want it: Christensen's milkshake study. McDonald's discovered nearly half their milkshakes sold before 8am, hired for the long boring commute, competing with bananas and bagels rather than other desserts. Naming the job changed what they improved (thicker shake, lasts the whole drive). Apple did it in six words: '1,000 songs in your pocket' names the iPod's job, with zero specs. Make them write the sentence for their own app, out loud. If they can't, they don't yet know what they're designing. Tie it back to the section: start from that end and design backward.",
-    // 8. Map the path
+    // 9. Map the path
     "Open with the stat on the slide: Baymard's running average across 50 studies puts cart abandonment at just over 70%, and a long or complicated checkout is one of the top documented reasons. The route is usually what loses people, so we map the route first. Keep it low-fi: boxes and arrows. Have them trace the checkout out loud: cart, checkout, sign-in branch, shipping, payment, review, then the approval branch with its retry loop. Two decisions carry the whole flow. Then the B2B parallel: a rep converts a lead to an opportunity, moves the stage, closes it. Same shape, different domain. The tool barely matters, FigJam, Whimsical, Excalidraw, Miro; pick one both partners can edit and keep it rough. Dor's rule: a flow chart earns its place when you can read the story off it. Never draw one just to have one.",
-    // 9. Stay low-fidelity
+    // 10. Stay low-fidelity
     "This is the emphasis. Wireframe while the flow is still moving. The real reason is commitment: grey boxes are easy to throw away, so you keep exploring. A polished screen looks finished, so people stop questioning it. See the whole flow before the details of any one screen. Point at the grey-box wireframe: every image is a placeholder, and that's the point. Ask: who has over-polished a screen and then hated to change it?",
-    // 10. Divider: a flow is a story
+    // 11. Divider: a flow is a story
     "Section break, and the heart of the framing. The best way to judge a flow is to tell it as a story. If it doesn't read as one, it isn't done.",
-    // 11. Story arc
+    // 12. Story arc
     "Click each beat on the arc, left to right; the panel loads its definition and an example from both products. Setup is entry and the empty state. Hook is the first action that earns attention, Spotify plays in one tap, Gong surfaces the one account that needs you today. Rising action is the steps with momentum. The peak is the payoff, Spotify's perfect song, Gong's follow-up done and the deal moving, the moment they remember, design it hardest. Resolution is confirmation and a next step. Then ask which beat their own flow is missing, usually a weak peak or a thin resolution. Note: the loop that brings them back is its own slide in a moment.",
-    // 12. Spotify flow example
+    // 13. Spotify flow example
     "The arc made concrete in a product everyone uses, the same five beats as the slide before. First close the loop back to the trigger slide: read the job sentence at the top out loud, when I sit down to work and the silence is distracting, I want to put on something that fits in one move, so I can drop into focus. That's the same JTBD template, and every beat below is how Spotify delivers it. Then walk the beats: setup is the home asking what you want; hook is hitting play in one tap; rising action is finding a playlist and shaping it; the peak is the song that fits perfectly; resolution is it playing and saved, more queued. Point out it's the exact same shape as the abstract arc, and it all pays off the one job. Ask: which beat is the moment they remember?",
-    // 13. Gong flow example
+    // 14. Gong flow example
     "Same arc, B2B, and the tool you'll present in next month. Start the same way as Spotify: read the job at the top, when an important account needs a follow-up, I want to be reminded and complete the task in one place, so I can follow up on time and keep the deal moving. Same JTBD template, just a work tool instead of a consumer one. The key move: the to-do is what serves that job, it helps me remember the follow-up and complete it without it slipping. Then the beats: my to-dos (setup, the reminder), find and open the right account (rising action), complete the task (the peak), success plus the next to-do (resolution). If someone asks where the Hook beat went: here it folds into the setup, the to-do list itself surfaces what needs you before any digging, and that's the first action that earns attention. The point: the arc and the job describe any good flow, including the small-business tools you're building.",
-    // 14. Peak-end
+    // 15. Peak-end
     "Kahneman's peak-end rule: we remember an experience by its best moment and its ending. The origin study is worth telling: Kahneman and Redelmeier tracked colonoscopy patients in the 90s. What patients remembered tracked the worst moment and the final moments, and the length of the procedure barely registered (duration neglect). A longer procedure with a gentler ending was remembered as less painful than a shorter, harsher one. That's how memory scores every experience, including your flow. So spend your effort on the peak and the ending. Point at the Asana shot: those rainbow creatures fire off when you clear your tasks, a peak someone designed on purpose, not by accident. Spotify's peak is the song that fits perfectly. A blank screen after the main action throws away a good flow. Ask: what's the peak in your product, and did you design it, or does it just happen?",
-    // 15. The Hook loop
+    // 16. The Hook loop
     "The coda the arc slide promised. Peak-end says memory keeps the peak and the ending; Eyal's Hook Model is about what the ending does next: trigger, action, variable reward, investment, and around again. Walk the two examples: on Spotify, saving the song is the investment, the library and the mixes get better, so tomorrow starts one tap closer. On Gong, the resolution queues the next to-do, so today's ending is literally tomorrow's trigger. Have them walk their own resolution and ask what brings the user back. One caution to say out loud: the loop has to serve the user's job from the trigger slide. A loop that serves only engagement is a dark pattern, and we'll grade it as one.",
-    // 16. Divider: make many screens feel like one
+    // 17. Divider: make many screens feel like one
     "Section break, and the real topic of the week. Five screens can each be on-system and still feel like five different apps. Continuity is the fix, and it has three layers: layout, information, space.",
-    // 17. Same shell (continuity of layout)
+    // 18. Same shell (continuity of layout)
     "Layer one, the shell. Frame this as a callback, not new material: we already did consistency and design systems, this is just how that same idea shows up across a flow (that framing lives here in the notes; the slide stays lean). Point at the two Gong screens, To-dos and Deals: the purple sidebar and the top header are identical, only the main region changes. That stillness is what lets the content change while the user stays oriented. Jakob's Law: people expect yours to behave like the apps they already use. Ask them to name what stays put in their own product across two screens.",
-    // 18. Carry context (continuity of information)
+    // 19. Carry context (continuity of information)
     "Layer two, information. Carry forward what they already did and keep it visible, so they never re-enter or re-decide. The cleanest example is Spotify: the song keeps playing as you move around, the context literally travels with you. Show progress. Gong keeps your recent accounts one click away. Recognition over recall, applied across screens.",
-    // 19. Continuity in motion (continuity of space)
+    // 20. Continuity in motion (continuity of space)
     "Layer three, space. A good transition says the new screen is part of the same world. The textbook example is Spotify's player bar expanding into the full-screen player, a shared element that moves and keeps you oriented. Reserve space so the layout holds steady on load. The slot here is for a real product clip, paste a URL or drop an mp4 and it plays.",
-    // 20. State by state
+    // 21. State by state
     "The same flow is a different journey by state. First-timers travel the empty journey, returners the full one, and both have to work. Treat empty, loading, error, and success as scenes: Spotify's empty library and offline mode, Gong's empty pipeline and a failed save. Design the first run on purpose.",
-    // 21. Divider: make it real
+    // 22. Divider: make it real
     "Section break. You've mapped it and told it as a story. Now make it real enough to feel.",
-    // 22. Prototype to feel
+    // 23. Prototype to feel
     "The core message: static screens take you to a point, layout and hierarchy and the look of each step, and that's real value. To test the flow itself, the momentum and the friction between screens, you have to click through an interactive prototype. Point at the wireframe prototype on the slide, watch the attach menu open: that's the level you want, something you can actually click. Make it clickable, with real transitions and the dead ends exposed, then walk it end to end and ask: does it have momentum, or does it stall?",
-    // 23. AI prototyping toolkit
+    // 24. AI prototyping toolkit
     "One reference slide, the intro does the framing: AI turns a flow into a clickable prototype in minutes, so explore three versions and commit, and treat what comes back as version zero. Left column, the tools, all take a description and hand back working screens: Figma Make lives inside Figma, v0 is strongest for clean web UI, Lovable and Bolt give a full running app, Claude refines a prototype by talking. Don't agonize over which. Right column is where quality comes from, the prompt: give it the job and your screen list, feed it your tokens, build one flow end to end, ask for the states, then click it and make the call. You own the design.",
-    // 24. Questions
+    // 25. Questions
     "Pause for questions before switching to the final brief.",
-    // 25. Divider: your final presentation
+    // 26. Divider: your final presentation
     "Shift to logistics and the brief. Tone change: this is what the whole semester has been building to.",
-    // 26. What you'll present
+    // 27. What you'll present
     "Set the expectation: a story in four parts, in order, and it maps exactly onto today's lecture. The idea and background, then the design system shown, then one flow end to end (walk it, then click the prototype), then the decisions. Ten minutes per pair, both partners, timed. Stress using the time smartly: most of it on the flow, keep the intro and the system quick. The common mistake is flipping through screens with no narrative. The full brief is linked on the slide.",
-    // 27. Done checklist
+    // 28. Done checklist
     "Read it as the spec for the final. Four buckets: idea and background, design system, the one flow, the talk. Call out the ones students drop: the states inside the flow, and rehearsing to time. It's the 60% final, in pairs, Figma with Material Design 3.",
-    // 28. Logistics + map
+    // 29. Logistics + map
     "Say the details clearly and twice. Wednesday, July 8, at 15:45. Gong, now at Icon Tower, Menachem Begin Rd, Ramat Gan, floor 22, ask for Sia. Map's on the slide. Arrive a few minutes early, Figma open before you walk in.",
-    // 29. Closing
+    // 30. Closing
     "Send them off: finish the flow end to end with every state, walk it as a story to check it has a goal, a peak, and an ending, rehearse out loud and time it to 10 minutes, bring the link ready. Last line: come tell us the story, see you at Gong on July 8.",
-    // 30. 1:1 sessions
+    // 31. 1:1 sessions
     "Logistics close: for the next two weeks we'll run 1:1 sessions, 20 minutes per pair, to help get the final presentation in shape. Bring whatever you have, the flow, the prototype, the open questions. Tell them how to sign up.",
   ],
 };
