@@ -10,6 +10,7 @@ import {
   Pencil,
 } from "lucide-react";
 import { SpeakerNotesWindow } from "./SpeakerNotesWindow";
+import { DeckMetaProvider } from "@/slides/templates";
 import { saveSlideEdit, deleteSlideItem } from "@/lib/saveSlide";
 import { collectUnits, serializeUnit } from "@/lib/slideEdit";
 
@@ -51,16 +52,21 @@ function useFitScale() {
 export function Deck({
   slides,
   notes,
+  footer,
 }: {
   slides: ReactNode[];
   notes?: string[];
+  /** Running dateline shown on every content slide (e.g. "Week 7 · … · Dor Tal"). */
+  footer?: string;
 }) {
   const [i, setI] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
   const [notesOpen, setNotesOpen] = useState(false);
   const [editing, setEditing] = useState(false);
+  const [jumpOpen, setJumpOpen] = useState(false);
   const [toast, setToast] = useState<Toast | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
+  const jumpRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const scale = useFitScale();
@@ -186,6 +192,24 @@ export function Deck({
     return () => window.removeEventListener("mousedown", onClick);
   }, [menuOpen]);
 
+  // Close the jump-to-slide selector on outside click or Escape.
+  useEffect(() => {
+    if (!jumpOpen) return;
+    const onClick = (e: MouseEvent) => {
+      if (jumpRef.current && !jumpRef.current.contains(e.target as Node))
+        setJumpOpen(false);
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setJumpOpen(false);
+    };
+    window.addEventListener("mousedown", onClick);
+    window.addEventListener("keydown", onKey);
+    return () => {
+      window.removeEventListener("mousedown", onClick);
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [jumpOpen]);
+
   return (
     <div className="relative flex min-h-screen flex-col items-center justify-center gap-6 overflow-hidden bg-background p-6 print:overflow-visible">
       {/* Edge click zones for navigation - sit below the chrome (z-20) so
@@ -259,30 +283,32 @@ export function Deck({
         )}
       </div>
 
-      {/* Screen view: the slide is authored at BASE_W×BASE_H and scaled to fill
-          the viewport. The outer box takes the *scaled* dimensions so centering
-          and the gap to the counter stay correct; the inner box keeps the base
-          dimensions and is transform-scaled. Hidden in print. */}
-      <div
-        className="overflow-hidden print:hidden"
-        style={{ width: BASE_W * scale, height: BASE_H * scale }}
-      >
-        {/* re-keyed each step so the entrance animation replays */}
+      <DeckMetaProvider footer={footer}>
+        {/* Screen view: the slide is authored at BASE_W×BASE_H and scaled to fill
+            the viewport. The outer box takes the *scaled* dimensions so centering
+            and the gap to the counter stay correct; the inner box keeps the base
+            dimensions and is transform-scaled. Hidden in print. */}
         <div
-          key={i}
-          ref={stageRef}
-          className={`animate-slide-in origin-top-left ${editing ? "slide-editing" : ""}`}
-          style={{ width: BASE_W, height: BASE_H, transform: `scale(${scale})` }}
+          className="overflow-hidden print:hidden"
+          style={{ width: BASE_W * scale, height: BASE_H * scale }}
         >
-          {slides[i]}
+          {/* re-keyed each step so the entrance animation replays */}
+          <div
+            key={i}
+            ref={stageRef}
+            className={`animate-slide-in origin-top-left ${editing ? "slide-editing" : ""}`}
+            style={{ width: BASE_W, height: BASE_H, transform: `scale(${scale})` }}
+          >
+            {slides[i]}
+          </div>
         </div>
-      </div>
-      {/* Print view: every slide stacked, one page each (see print CSS). */}
-      <div className="slide-stage hidden w-full print:block">
-        {slides.map((s, idx) => (
-          <div key={idx}>{s}</div>
-        ))}
-      </div>
+        {/* Print view: every slide stacked, one page each (see print CSS). */}
+        <div className="slide-stage hidden w-full print:block">
+          {slides.map((s, idx) => (
+            <div key={idx}>{s}</div>
+          ))}
+        </div>
+      </DeckMetaProvider>
 
       <div className="deck-chrome flex items-center gap-2">
         <button
@@ -293,9 +319,38 @@ export function Deck({
         >
           <ChevronLeft className="h-4 w-4" />
         </button>
-        <span className="text-caption tabular-nums text-muted-foreground">
-          {i + 1} / {slides.length}
-        </span>
+        <div ref={jumpRef} className="relative">
+          <button
+            onClick={() => setJumpOpen((o) => !o)}
+            className="rounded-md px-1.5 py-0.5 text-caption tabular-nums text-muted-foreground hover:bg-muted hover:text-foreground"
+            aria-label="Jump to slide"
+            aria-expanded={jumpOpen}
+          >
+            {i + 1} / {slides.length}
+          </button>
+          {jumpOpen && (
+            <div className="absolute bottom-full left-1/2 mb-1.5 max-h-[40vh] w-60 -translate-x-1/2 overflow-y-auto rounded-md border bg-card p-2 shadow-md">
+              <div className="grid grid-cols-6 gap-1">
+                {slides.map((_, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => {
+                      setI(idx);
+                      setJumpOpen(false);
+                    }}
+                    className={`rounded-sm py-1 text-caption tabular-nums ${
+                      idx === i
+                        ? "bg-foreground text-background"
+                        : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                    }`}
+                  >
+                    {idx + 1}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
         <button
           onClick={() => go(1)}
           disabled={i === last}
@@ -304,6 +359,11 @@ export function Deck({
         >
           <ChevronRight className="h-4 w-4" />
         </button>
+        {footer && (
+          <span className="ml-3 border-l pl-3 text-caption uppercase tracking-widest text-muted-foreground/70">
+            {footer}
+          </span>
+        )}
       </div>
 
       {notesOpen && (

@@ -19,6 +19,11 @@ export default {
           DEFAULT: "hsl(var(--accent))",
           foreground: "hsl(var(--accent-foreground))",
         },
+        highlight: {
+          DEFAULT: "hsl(var(--highlight))",
+          foreground: "hsl(var(--highlight-foreground))",
+        },
+        rule: "hsl(var(--rule))",
         border: "hsl(var(--border))",
         card: {
           DEFAULT: "hsl(var(--card))",
@@ -31,9 +36,10 @@ export default {
         sm: "calc(var(--radius) - 4px)",
       },
       fontFamily: {
-        sans: ["Geist", "ui-sans-serif", "system-ui", "sans-serif"],
-        // headline display serif
-        serif: ['"DM Serif Display"', "ui-serif", "Georgia", "serif"],
+        // Libre Franklin = the open-source Franklin Gothic, NYT's label/UI sans.
+        sans: ["Libre Franklin", "ui-sans-serif", "system-ui", "sans-serif"],
+        // Newsreader = a screen-designed news serif (NYT Cheltenham/Imperial spirit).
+        serif: ["Newsreader", "ui-serif", "Georgia", "serif"],
       },
       // 8pt spacing scale (tokens the course teaches)
       spacing: {

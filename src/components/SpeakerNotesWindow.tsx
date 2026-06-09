@@ -53,7 +53,7 @@ export function SpeakerNotesWindow({
   return createPortal(
     <div
       style={{
-        fontFamily: "Geist, ui-sans-serif, system-ui, sans-serif",
+        fontFamily: "Libre Franklin, ui-sans-serif, system-ui, sans-serif",
         color: "#f5f5f5",
         minHeight: "100vh",
         padding: "24px",

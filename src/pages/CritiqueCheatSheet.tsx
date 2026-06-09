@@ -28,7 +28,7 @@ const SECTIONS = [
 ];
 
 function Mark({ children }: { children: ReactNode }) {
-  return <mark className="bg-accent px-1 text-accent-foreground">{children}</mark>;
+  return <mark className="bg-highlight px-1 text-highlight-foreground">{children}</mark>;
 }
 
 /** Inline, muted source line. Keeps every claim traceable, per course rule. */

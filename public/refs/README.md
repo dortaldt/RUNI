@@ -5,6 +5,44 @@ Drop image files here and they appear automatically in the deck (and the PDF). T
 `src="/refs/pnc-button-inventory.jpg"` -> `public/refs/pnc-button-inventory.jpg`. Until a file
 exists, the slide shows a tidy placeholder naming the file to add, so nothing breaks.
 
+## Adding motion: gifs, videos, and embeds (via the `Media` component)
+The `Media` / `MediaSlide` / `SplitMediaSlide` components accept a **URL or a local `/refs` file** and
+render the right thing automatically:
+- A `.gif`, `.png`, or `.jpg` -> image. A `.mp4` / `.webm` / `.mov` -> autoplaying, looping, muted video.
+  A YouTube or Vimeo link -> a responsive embed. No config needed, just pass the `src`.
+- Two ways to add: (a) paste a remote URL straight into the slide data, or (b) drop a file here and
+  reference it as `/refs/<name>`.
+- For video, also pass a `poster` still. The slot shows the poster until the clip exists, then plays it.
+  The poster is also what prints (video can't print).
+
+Open media slots (poster shows now; add the clip to make it move):
+- `skeleton-loading-demo.mp4` (Week 7 deck) -> a skeleton resolving into content. Poster is
+  `skeleton-loading-finance.png`. Add an .mp4/.gif here, or swap the slide's `src` for a URL.
+- `flow-transition-demo.mp4` (Week 9 deck) -> a screen-to-screen transition (a card opening into a
+  full page). Poster falls back to `skeleton-loading-finance.png`. Add a real product clip or paste a
+  URL on the "Continuity in motion" slide.
+
+## The asset registry (the one place to add visuals)
+Slides no longer hardcode image paths. They read from `deck/src/content/assets.ts`, a registry keyed by
+slot id (e.g. `week9.journeyMap`). To fill a slot, edit that one file: either set `src` to a dropped
+file here (`/refs/<name>`) or paste a remote URL (image, gif, .mp4, or YouTube/Vimeo all auto-detect).
+Hand Dor's pasted URL or dropped file straight into the matching slot.
+
+Week 9 slots (in `assets.ts`) and the files they expect if you drop locally:
+- `week9.journeyMap` -> `journey-map-example.png`. A real journey map (phases, actions, mindset, emotion
+  line). Source: Ekaterina Mogilnikova, Dribbble (dribbble.com/shots/10774638-Customer-Journey-Map-UX-Research).
+- `week9.onboardingFlow` -> `onboarding-flow-sequence.png`. An onboarding flow in sequence, progress
+  shown. Source: Octet Design Studio (dribbble.com/shots/19444015-SaaS-App-Sign-Up-and-Onboarding-Flow-UI-Design-Animation).
+- `week9.crossScreen` -> `cross-screen-consistency.png`. One app across screens, same shell. Source: a
+  real set from Mobbin (Gmail, Linear, Stripe).
+- `week9.transition` -> `flow-transition-demo.mp4`. A screen-to-screen transition. Poster falls back to
+  `skeleton-loading-finance.png`.
+
+NOTE (2026-06-07): auto-fetching Dribbble currently fails. The AWS WAF challenge now also blocks the
+r.jina.ai reader-proxy and WebFetch (both return the WAF page, not the shot). Until that changes, fill
+these by hand: open the shot link, save the image into this folder under the exact filename above, or
+paste a direct image URL into the slide's `src`. Google AI Studio raster is the other approved source.
+
 ## "Design sprint (ish)" workshop deck (resolved, real images)
 The interface-inventory gallery ships three real, attributed images, framed as problem then system:
 - `pnc-button-inventory.jpg` -> PNC's many inconsistent button styles on one site.

@@ -1,4 +1,8 @@
-@import url("https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=DM+Serif+Display&display=swap");
+/* NYT-grade type: Libre Franklin (open-source Franklin Gothic, the NYT label/UI
+   sans) for body + labels; Newsreader (a screen-designed news serif) for
+   headlines. Replaces Geist + DM Serif Display for a newspaper, not fashion-mag,
+   feel. */
+@import url("https://fonts.googleapis.com/css2?family=Libre+Franklin:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -9,9 +13,10 @@
    restyles every deck and every slide. This token layer IS the
    design system the course teaches.
 
-   Palette: warm greys + a single bright-yellow highlight (#fcf403).
-   The yellow is light, so it's used as a FILL / highlighter behind
-   dark text - never as text or thin lines on light backgrounds.
+   NYT-influenced (decided 2026-06-07): near-monochrome ink on warm white.
+   Emphasis comes from black hairline RULES and type weight, not color. The
+   brand yellow is demoted to a rare manual highlighter (the `--highlight`
+   token, used only by <Highlight>); it is no longer the working accent.
    ────────────────────────────────────────────────────────────── */
 @layer base {
   :root {
@@ -29,11 +34,20 @@
     --primary: 30 8% 14%;
     --primary-foreground: 40 30% 99%;
 
-    /* accent = #fcf403 - the 10% highlight. Dark text sits on top. */
-    --accent: 58 98% 50%;
-    --accent-foreground: 30 10% 12%;
+    /* accent = ink. The working accent is now monochrome: badges become solid
+       black label blocks, links/underlines are ink. NYT authority by restraint. */
+    --accent: 30 8% 14%;
+    --accent-foreground: 40 30% 99%;
 
+    /* rule = the NYT signature hairline: a near-black thin rule under titles and
+       between sections. Stronger than --border (the faint structural divider). */
+    --rule: 30 8% 16%;
     --border: 38 12% 88%;
+
+    /* highlight = #fcf403, the demoted brand yellow. Used ONLY by <Highlight> as
+       a rare manual highlighter behind dark text. Never the default accent. */
+    --highlight: 58 98% 50%;
+    --highlight-foreground: 30 10% 12%;
 
     --radius: 0.75rem;
   }
@@ -50,6 +64,12 @@
   strong {
     font-weight: 700;
     color: hsl(var(--foreground));
+  }
+  /* Newsreader is a low-contrast text serif: at 400 it reads light for a
+     headline, so the serif display face carries a touch more weight. A
+     `font-normal` utility still wins (utilities layer > base) where set. */
+  .font-serif {
+    font-weight: 600;
   }
 }
 
@@ -102,6 +122,66 @@
   .animate-slide-in,
   .animate-slide-in .slide > * {
     animation: none;
+  }
+}
+
+/* ──────────────────────────────────────────────────────────────
+   Story-arc draw-on animation (Week 9, "Every flow has an arc").
+   The curve draws itself trigger → goal, each beat pops in as the
+   line reaches it, and the area fill + peak drop-line settle last.
+   Pair `.arc-draw` with pathLength="1" so the dash math is normalized.
+   ────────────────────────────────────────────────────────────── */
+.arc-draw {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: arc-draw 1.7s cubic-bezier(0.45, 0, 0.2, 1) forwards;
+}
+@keyframes arc-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.arc-fade {
+  opacity: 0;
+  animation: arc-fade 0.7s var(--ease) forwards;
+}
+@keyframes arc-fade {
+  to {
+    opacity: 1;
+  }
+}
+
+.arc-beat {
+  opacity: 0;
+  animation: arc-beat 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+@keyframes arc-beat {
+  from {
+    opacity: 0;
+    transform: translateY(9px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* The side panel fades in each time a different beat is selected (re-keyed). */
+.arc-panel {
+  animation: arc-beat 0.32s var(--ease) both;
+}
+
+/* No motion, and a static final frame for PDF export. */
+@media (prefers-reduced-motion: reduce), print {
+  .arc-draw,
+  .arc-fade,
+  .arc-beat,
+  .arc-panel {
+    animation: none !important;
+    opacity: 1 !important;
+    stroke-dashoffset: 0 !important;
+    transform: none !important;
   }
 }
 

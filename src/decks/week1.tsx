@@ -9,12 +9,13 @@ import {
 
 /**
  * Week 1: Welcome. Ported from the original Google Slides deck as the
- * proof-of-system deck. Each slide is one entry; presenter notes can be
- * added later as a notes view. Edit content here; styling comes from tokens.
+ * proof-of-system deck. Edit content here; styling comes from tokens.
+ *
+ * Week identity (number, topic, status) is the manifest's job (content/course.ts).
+ * This file owns only the slides + notes, keyed to a week by `n`.
  */
 export const week1 = {
-  slug: "week-1",
-  title: "Week 1: Welcome",
+  n: 1,
   slides: [
     <TitleSlide
       course="Design Patterns and Systems"
@@ -69,7 +70,7 @@ export const week1 = {
     <BreakoutSlide
       minutes="5-7 min"
       steps={[
-        "Pick a product you both use (Zoom, WhatsApp, Slack, Gmail, Spotify…)",
+        "Pick a product you both use (Slack, Notion, Figma, Gmail, Spotify, WhatsApp…)",
         "Find a design pattern that repeats in several areas",
         "Describe the pattern",
         "Add screenshots of the different instances",
