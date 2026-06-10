@@ -824,7 +824,7 @@ export const week9 = {
       </div>
     </Slide>,
 
-    <DividerSlide title="A flow is a story" />,
+    <DividerSlide title="A flow is a story" subtitle="And what makes a good story?" />,
 
     <StoryArcSlide />,
 
@@ -872,8 +872,7 @@ export const week9 = {
             "There it is. That's what I came for."
           </h2>
           <p className="mt-4 max-w-2xl text-h3 font-normal text-muted-foreground">
-            People remember a journey by its best moment and its ending. Design the peak, then the
-            exit.
+            People remember a journey by its <strong>best moment</strong> and its <strong>ending</strong>. Design the peak, then the exit.
           </p>
           <ul className="mt-6 max-w-2xl space-y-2">
             {[
@@ -881,7 +880,7 @@ export const week9 = {
                 Find the <strong>peak</strong> (the payoff) and make it land. Spotify's is the song that fits; Asana fires off the celebration creatures when you clear your tasks
               </>,
               "End on confirmation and a clear next step",
-              "A rough middle is forgivable. A weak peak or a dead-end ending is what they'll remember",
+              <><strong>A rough middle is forgivable</strong>. A weak peak or a dead-end ending is what they'll remember</>,
             ].map((p, i) => (
               <li key={i} className="flex items-baseline gap-2 text-body">
                 <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-foreground" />
