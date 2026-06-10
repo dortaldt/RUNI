@@ -359,7 +359,7 @@ function FlowExampleSlide({
   beats: { beat: string; desc: string; accent?: boolean }[];
   // Optional Jobs-to-be-Done sentence (the trigger slide's template), shown as the goal
   // the arc climbs toward, so the story reads as the delivery of one job.
-  job?: { when: string; want: string; outcome: ReactNode };
+  job?: { when: string; want: ReactNode; outcome: ReactNode };
 }) {
   return (
     <Slide className="flex flex-col">
@@ -854,8 +854,8 @@ export const week9 = {
       media={asset("week9.gongFlow")}
       job={{
         when: "an important account needs a follow-up",
-        want: "be reminded and complete the task in one place",
-        outcome: <><strong>follow up on time and keep the deal moving</strong></>,
+        want: <>be <strong>reminded</strong> and <strong>complete</strong> the task in one place</>,
+        outcome: <>follow up on time and<strong> keep the deal moving</strong></>,
       }}
       beats={[
         { beat: "Setup", desc: "My to-dos: the day's work, waiting." },
@@ -914,6 +914,28 @@ export const week9 = {
       ]}
       source={<>The Hook Model: Nir Eyal, <em>Hooked: How to Build Habit-Forming Products</em> (2014)</>}
       media={asset("week9.hookModel")}
+    />,
+
+    // Reality check / honesty slide: the clean arc is a teaching tool. Real
+    // products branch, loop, and run many flows at once. Keeps the model from
+    // reading as a law before the exercise sends them into a real app.
+    <ConceptSlide
+      title="Reality check: flows aren't always linear"
+      definition={<>The arc is a <strong>teaching tool</strong>, not a law. Real products branch, loop, and run many flows side by side.</>}
+      points={[
+        <>
+          <strong>One app, many flows.</strong> Spotify isn't just search → play. It's discover a mix, queue for the gym, share a track, download for offline, each its own little arc
+        </>,
+        <>
+          <strong>Flows fork mid-way.</strong> Empty, error, and success split one path into different journeys (callback to designing each state)
+        </>,
+        <>
+          <strong>People enter in the middle.</strong> A deep link, a notification, or a Gong "review this call" alert drops someone three steps in, past the trigger you designed
+        </>,
+        <>
+          So: map the <Highlight>main flow</Highlight> first, then ask where it branches and where people jump in
+        </>,
+      ]}
     />,
 
     // In-class exercise: reverse-engineer the arc on a real product. Orange
