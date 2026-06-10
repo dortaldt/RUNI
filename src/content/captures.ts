@@ -1,12 +1,12 @@
 /* ──────────────────────────────────────────────────────────────
-   DBDs — Dor's Brain Dump. The raw material behind the course:
+   DBDs: Dor's Brain Dump. The raw material behind the course:
    thoughts and visual references Dor captures in Apple Notes during
    the day (any note titled "RUNI brain*"), then the brain-dump skill
    triages into the memory engine and appends here as data.
 
    This file is APPEND-ONLY in spirit: each capture is a dated record
    with an immutable `id`. When a capture gets shaped into a lecture,
-   add the destination to `shapedInto` rather than deleting it — the
+   add the destination to `shapedInto` rather than deleting it; the
    point of the page is to show the raw → shaped lineage (transparency).
 
    Images live in deck/public/refs/brain/ and are referenced as
@@ -35,7 +35,7 @@ export const captures: Capture[] = [
   {
     id: "2026-06-07-flows-skeleton",
     date: "2026-06-07",
-    note: "Flows are the skeleton of the experience — without it the UI is a shapeless skin.",
+    note: "Flows are the skeleton of the experience. Without it, the UI is a shapeless skin.",
     images: ["/refs/brain/2026-06-07-flows-skeleton-1.jpg"],
     tags: ["flows", "navigation", "principle"],
     public: true,

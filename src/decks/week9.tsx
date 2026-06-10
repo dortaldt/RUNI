@@ -7,6 +7,7 @@ import {
   AgendaSlide,
   ConceptSlide,
   ChecklistSlide,
+  ActivitySlide,
   DividerSlide,
   SplitMediaSlide,
   Media,
@@ -53,6 +54,7 @@ function A({ href, children }: { href: string; children: ReactNode }) {
 // its own coda slide later, so the arc itself stays pure narrative.
 const ARC_BEATS: {
   k: string;
+  f: string;
   g: string;
   d: string;
   eg: string;
@@ -64,6 +66,7 @@ const ARC_BEATS: {
 }[] = [
   {
     k: "Setup",
+    f: "Exposition",
     g: "Entry & empty state",
     d: "Entry and the empty state. The user lands and asks: where am I, and what can I do here?",
     eg: "Spotify opens to a home built around you. Gong opens to your to-dos, the day's work waiting.",
@@ -74,6 +77,7 @@ const ARC_BEATS: {
   },
   {
     k: "Hook",
+    f: "Inciting incident (exciting force)",
     g: "First action earns attention",
     d: "The first small action that earns attention before you ask for anything. Make it nearly free.",
     eg: "Spotify plays in one tap. Gong surfaces the one account that needs you today, before any digging.",
@@ -84,6 +88,7 @@ const ARC_BEATS: {
   },
   {
     k: "Rising action",
+    f: "Rising action",
     g: "Momentum, no friction",
     d: "The steps in between, with momentum and no friction. Every one moves them closer to the goal.",
     eg: "Skipping and liking to shape the mix. Opening the right account to work its follow-up.",
@@ -94,6 +99,7 @@ const ARC_BEATS: {
   },
   {
     k: "Peak",
+    f: "Climax",
     g: "The payoff: the moment they remember",
     d: "The payoff: the one thing they came for, designed to land. This is the moment they remember.",
     eg: "Spotify: the song that fits perfectly. Gong: the follow-up's done, the deal keeps moving.",
@@ -105,6 +111,7 @@ const ARC_BEATS: {
   },
   {
     k: "Resolution",
+    f: "Falling action & dénouement",
     g: "Confirmation & one next step",
     d: "Confirmation that it worked, and one clear next step so they're never left at a dead end.",
     eg: "Spotify saves it to your library. Gong queues your next to-do.",
@@ -188,7 +195,7 @@ function StoryArcSlide() {
               strokeDasharray="3 6"
               style={{ animationDelay: "1.3s" }}
             />
-            {/* the arc — draws itself on entry */}
+            {/* the arc; draws itself on entry */}
             <path
               d={ARC_PATH}
               pathLength={1}
@@ -220,7 +227,7 @@ function StoryArcSlide() {
             >
               goal met
             </text>
-            {/* the five beats — click to load into the side panel */}
+            {/* the five beats; click to load into the side panel */}
             {ARC_BEATS.map((beat, i) => {
               const above = beat.side === "above";
               const nameY = above ? beat.y - (beat.accent ? 50 : 44) : beat.y + 36;
@@ -312,6 +319,9 @@ function StoryArcSlide() {
               </span>
               <h3 className="font-serif text-h3 leading-none tracking-tight">{b.k}</h3>
             </div>
+            <p className="mt-1.5 text-[0.7rem] uppercase tracking-wider text-muted-foreground/70">
+              Freytag: <span className="font-medium text-muted-foreground">{b.f}</span>
+            </p>
             <p className="mt-3 text-caption leading-relaxed text-muted-foreground">{b.d}</p>
             <div className="mt-3.5 border-t border-border pt-3.5">
               <p className="text-caption leading-relaxed">
@@ -320,7 +330,7 @@ function StoryArcSlide() {
             </div>
           </div>
           <p className="mt-2.5 text-[0.7rem] italic text-muted-foreground">
-            Story arc (Freytag's pyramid)
+            Adapted from Freytag's pyramid (Die Technik des Dramas, 1863)
           </p>
         </aside>
       </div>
@@ -408,9 +418,9 @@ function FlowExampleSlide({
   );
 }
 
-// The four steps hiding between Sarah's message and her reply. Rendered as
-// nodes on a line that draws itself left to right (same trigger → goal axis
-// the story arc reuses later), labels alternating above/below the line.
+// The four steps hiding between Sarah's message and her reply, in forward
+// order (open → check → price → write). The slide reveals them *backward*,
+// rightmost first, so the index→reveal mapping is `step >= STEPS.length - i`.
 const HIDDEN_STEPS: { t: string; d: string }[] = [
   { t: "Open the app", d: "one tap from the chat" },
   { t: "Check Saturday", d: "the calendar: one slot left" },
@@ -419,58 +429,72 @@ const HIDDEN_STEPS: { t: string; d: string }[] = [
 ];
 
 /**
- * Cold open, part two: the hidden path. The line draws from the incoming
- * message bubble to the reply bubble; the four steps pop in as it passes.
- * Sets the stage for the whole lecture (the path between a trigger and its
- * goal is the flow) and foreshadows the story arc's trigger → goal axis.
+ * The hidden path, revealed backward. Lives right after the trigger/job slide,
+ * so it makes "design backward from the end" literal: both ends are on screen
+ * from the start (the trigger message and the reply, the goal met), then each
+ * click fills in the path between them working back from the goal, the axis
+ * first, then the steps rightmost → leftmost. Click anywhere on the diagram to
+ * step back; 4 reveals total (one per step). State resets each time the slide
+ * is mounted (Deck re-keys per slide), and the print/PDF view forces every
+ * element visible via `print:opacity-100`.
  */
 function HiddenStepsSlide() {
+  const TOTAL = HIDDEN_STEPS.length; // one reveal per step
+  const [step, setStep] = useState(0);
+  const advance = () => setStep((s) => Math.min(TOTAL, s + 1));
   return (
     <Slide className="flex flex-col">
-      <Eyebrow>One minute later</Eyebrow>
-      <TitleWithIcon className="mt-2">Between the message and the reply</TitleWithIcon>
+      <Eyebrow>Design backward</Eyebrow>
+      <TitleWithIcon className="mt-2">Work back from the reply</TitleWithIcon>
       <p className="mt-2 max-w-3xl text-body text-muted-foreground">
-        Sarah answers in under a minute. Inside that minute there's a path, and every step of it is
-        a screen.
+        'What do I need to get there?'
       </p>
-      <div className="relative mt-2 flex min-h-0 flex-1 items-center px-2">
-        {/* the path, drawn message → reply behind the bubbles and nodes.
-            A plain div growing via scaleX: SVG dasharray rendered the line as
-            dashes here. Inset by half a bubble width so the ends stay hidden
-            behind the two bubbles. */}
+      <div
+        role="button"
+        tabIndex={0}
+        aria-label="Reveal the previous step"
+        onClick={advance}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            advance();
+          }
+        }}
+        className="relative mt-2 flex min-h-0 flex-1 cursor-pointer items-center px-2"
+      >
+        {/* the path between trigger and goal; fades in on the first reveal,
+            inset by half a bubble width so the ends sit behind the bubbles. */}
         <div className="absolute left-28 right-28 top-[calc(50%-1px)] h-[2px]" aria-hidden>
           <div
-            className="line-draw h-full w-full bg-foreground"
-            style={{ animationDelay: "0.2s" }}
+            className={`h-full w-full bg-foreground transition-opacity duration-500 print:opacity-100 ${
+              step >= 1 ? "opacity-100" : "opacity-0"
+            }`}
           />
         </div>
-        {/* incoming message: the trigger */}
-        <div
-          className="arc-fade relative z-10 w-56 shrink-0 rounded-2xl rounded-bl-sm border bg-card px-4 py-3"
-          style={{ animationDelay: "0.1s" }}
-        >
+        {/* incoming message: the trigger, shown from the start (one end) */}
+        <div className="arc-fade relative z-10 w-56 shrink-0 rounded-2xl rounded-bl-sm border bg-card px-4 py-3">
           <p className="text-caption leading-relaxed">
             Can you do a gluten-free cake for Saturday?
           </p>
           <p className="mt-1 text-[0.7rem] text-muted-foreground">9:12</p>
         </div>
-        {/* the four hidden steps */}
+        {/* the four hidden steps, revealed right → left (rightmost first) */}
         {HIDDEN_STEPS.map((s, i) => {
           const above = i % 2 === 0;
-          const delay = `${0.6 + i * 0.35}s`;
+          const shown = step >= HIDDEN_STEPS.length - i;
           return (
             <div key={s.t} className="relative flex h-full flex-1 items-center justify-center">
               <span
-                className="arc-beat z-10 flex h-8 w-8 items-center justify-center rounded-full border border-foreground bg-background text-caption font-semibold"
-                style={{ animationDelay: delay }}
+                className={`z-10 flex h-8 w-8 items-center justify-center rounded-full border border-foreground bg-background text-caption font-semibold print:opacity-100 ${
+                  shown ? "arc-beat" : "opacity-0"
+                }`}
               >
                 {i + 1}
               </span>
               <div
-                className={`arc-beat absolute w-44 text-center ${
+                className={`absolute w-44 text-center print:opacity-100 ${
                   above ? "bottom-[calc(50%+1.9rem)]" : "top-[calc(50%+1.9rem)]"
-                }`}
-                style={{ animationDelay: delay }}
+                } ${shown ? "arc-beat" : "opacity-0"}`}
               >
                 <p className="text-caption font-semibold">{s.t}</p>
                 <p className="text-caption text-muted-foreground">{s.d}</p>
@@ -478,23 +502,26 @@ function HiddenStepsSlide() {
             </div>
           );
         })}
-        {/* the reply: goal met, before they ask another baker */}
-        <div
-          className="arc-beat relative z-10 w-56 shrink-0 rounded-2xl rounded-br-sm bg-accent px-4 py-3 text-accent-foreground"
-          style={{ animationDelay: "2.1s" }}
-        >
+        {/* the reply: goal met, shown from the start (this is the end) */}
+        <div className="arc-fade relative z-10 w-56 shrink-0 rounded-2xl rounded-br-sm bg-accent px-4 py-3 text-accent-foreground">
           <p className="text-caption leading-relaxed">
             Yes! Gluten-free chocolate, ₪380. Pickup Saturday from 10:00?
           </p>
           <p className="mt-1 text-right text-[0.7rem] opacity-70">9:13 ✓✓</p>
         </div>
       </div>
-      <p
-        className="arc-fade mx-auto max-w-4xl text-balance pb-2 text-center font-serif text-h3"
-        style={{ animationDelay: "2.7s" }}
-      >
-        That path is the <Highlight>flow</Highlight>, and today we design it on purpose.
-      </p>
+      {/* bottom line: a click hint while revealing, the payoff once it's done */}
+      <div className="flex min-h-[3.25rem] items-center justify-center pb-2">
+        {step >= TOTAL ? (
+          <p className="arc-fade max-w-4xl text-balance text-center font-serif text-h3">
+            That's the <Highlight>flow</Highlight>, discovered backward, from the goal to the trigger.
+          </p>
+        ) : (
+          <p className="text-caption uppercase tracking-widest text-muted-foreground/70 print:hidden">
+            ← Click to reveal the previous step
+          </p>
+        )}
+      </div>
     </Slide>
   );
 }
@@ -515,17 +542,51 @@ export const week9 = {
     // triggering") picks this exact message back up and turns it into a job.
     <Slide className="flex flex-col items-center justify-center text-center">
       <Eyebrow>Tuesday, 9:12 · a message to Sarah's bakery</Eyebrow>
-      <h2 className="mt-4 max-w-4xl text-balance font-serif text-h1 tracking-tight">
-        "Can you do a gluten-free cake for Saturday?"
-      </h2>
-      <p className="mt-6 max-w-4xl text-balance text-h3 font-normal text-muted-foreground">
+      {/* The quote is a literal incoming message; render it as a chat bubble
+          in the same visual language as HiddenStepsSlide (incoming = bg-card,
+          border), but kept at h1 size, with a comic speech-bubble tail. It
+          arrives like a real chat message: typing dots first, then the bubble
+          springs in from its tail (choreography in index.css, msg-* classes). */}
+      <div className="relative mt-6 max-w-4xl">
+        {/* Typing indicator: the same bubble anatomy in miniature, anchored
+            bottom-left where the message's tail will land. */}
+        <div
+          aria-hidden
+          className="msg-typing absolute bottom-0 left-0 rounded-[2rem] border bg-card px-8 py-7 shadow-sm"
+        >
+          <div className="flex gap-2">
+            <span className="msg-dot h-3 w-3 rounded-full bg-muted-foreground" />
+            <span className="msg-dot h-3 w-3 rounded-full bg-muted-foreground" />
+            <span className="msg-dot h-3 w-3 rounded-full bg-muted-foreground" />
+          </div>
+          <span className="absolute left-8 top-full h-0 w-0 border-x-[13px] border-t-[16px] border-x-transparent border-t-border" />
+          <span className="absolute left-[2.125rem] top-full z-10 h-0 w-0 -translate-y-[2px] border-x-[11px] border-t-[14px] border-x-transparent border-t-card" />
+        </div>
+        <div className="msg-pop-in relative rounded-[2rem] border bg-card px-10 py-8 text-left shadow-sm">
+          <h2 className="text-balance font-serif text-h1 tracking-tight">
+            Can you do a gluten-free cake for Saturday?
+          </h2>
+          <p className="mt-4 text-h3 font-normal text-muted-foreground">9:12</p>
+          {/* Comic speech-bubble tail: a border-colored triangle behind, and a
+              card-colored triangle in front that sits 2px higher so it hides the
+              bubble's bottom border at the tail's mouth; the bubble opens into
+              the tail instead of being cut across by a line. */}
+          <span
+            aria-hidden
+            className="absolute left-14 top-full h-0 w-0 border-x-[20px] border-t-[25px] border-x-transparent border-t-border"
+          />
+          <span
+            aria-hidden
+            className="absolute left-[3.625rem] top-full z-10 h-0 w-0 -translate-y-[2px] border-x-[18px] border-t-[22px] border-x-transparent border-t-card"
+          />
+        </div>
+      </div>
+      <p className="msg-after mt-6 max-w-4xl text-balance text-h3 font-normal text-muted-foreground">
         The journey has already started. Sarah's app isn't open yet.
       </p>
     </Slide>,
 
-    <HiddenStepsSlide />,
-
-    // Recap the most recent class — the in-class redesign workshop
+    // Recap the most recent class; the in-class redesign workshop
     // (interface inventory + heuristic eval). The PNC button inventory image
     // points straight back to that deck.
     <Slide>
@@ -557,9 +618,9 @@ export const week9 = {
       title="Today"
       items={[
         <>Start from the <strong>goal</strong>, and map the path low-fi</>,
-        <>A flow is a <strong>story</strong>: setup to payoff</>,
+        <>A flow is a story: <strong>setup</strong> to <strong>payoff</strong></>,
         <>Make many screens feel like <strong>one product</strong></>,
-        <>Prototype it to <strong>feel</strong> the flow (with AI to go faster)</>,
+        <><strong>Prototype</strong> it to <strong>feel</strong> the flow (with AI to go faster)</>,
         <>Your <strong>final presentation</strong>: the brief</>,
       ]}
     />,
@@ -577,7 +638,7 @@ export const week9 = {
               </>,
             ]}
           </Lead>
-          <ul className="mt-6 max-w-2xl space-y-2">
+          <ol className="mt-6 max-w-2xl space-y-3">
             {[
               <>
                 It starts from the user's <strong>goal</strong>, the reason they opened the app at all
@@ -589,12 +650,14 @@ export const week9 = {
                 It feels like <strong>one product</strong> across every screen
               </>,
             ].map((p, i) => (
-              <li key={i} className="flex items-baseline gap-2 text-body">
-                <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-foreground" />
+              <li key={i} className="flex items-baseline gap-3 text-body">
+                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-foreground text-caption font-semibold text-foreground">
+                  {i + 1}
+                </span>
                 <span>{p}</span>
               </li>
             ))}
-          </ul>
+          </ol>
         </div>
         <Media {...asset("week9.flowDemo")} aspect="16/10" />
       </div>
@@ -603,22 +666,25 @@ export const week9 = {
     // ── Part 1: start from the goal, map low-fi ───────────────────
     <DividerSlide title="Start from the end" />,
 
-    // The trigger & the job, merged — the trigger lives out in their life
+    // The trigger & the job, merged; the trigger lives out in their life
     // (the cold-open message, picked back up here), and the job names what
     // they came for.
     <Slide>
       <div className="grid grid-cols-[1fr_minmax(0,38%)] items-center gap-10">
         <div>
-          <h2 className="font-serif text-h2 tracking-tight">It's a bit triggering</h2>
+          <h2 className="font-serif text-h2 tracking-tight">Outcome first</h2>
           <Lead className="mt-4">
             {[
               <>
-                The journey starts in the user's life, before your app opens, with a{" "}
-                <strong className="text-foreground">trigger</strong>.
+                Every flow delivers one <strong className="text-foreground">outcome</strong>, the
+                goal they came for. Find that end first; it's where you start designing.
               </>,
               <>
-                Write the goal as a job:{" "}
-                <Highlight>When [situation], I want to [motivation], so I can [outcome].</Highlight>
+                Write it as a job:{" "}
+                <Highlight>When [situation], I want to [motivation], so I can [outcome].</Highlight>{" "}
+                The <strong className="text-foreground">"so I can"</strong> is the end; the{" "}
+                <strong className="text-foreground">"when"</strong> is the trigger that sets it off,
+                out in their life before your app opens.
               </>,
             ]}
           </Lead>
@@ -628,7 +694,7 @@ export const week9 = {
                 "When a customer asks 'gluten-free cake for Saturday?', Sarah wants to quote a price in under a minute, <strong>so she answers before they ask another baker</strong>"
               </>,
               <>
-                The <strong>"when"</strong> sets where the flow starts; the <strong>"so I can"</strong> sets when it's done. Design backward from that end
+                Start from the <strong>"so I can"</strong>; that's done. The <strong>"when"</strong> is where it begins, out in their life. Design backward, from the end to the trigger
               </>,
               <>
                 Same shape for any job: "When stock runs low, I want a heads-up, so I can reorder before I sell out"
@@ -650,7 +716,12 @@ export const week9 = {
       </div>
     </Slide>,
 
-    // Map the path low-fi — folds the old "screens in sequence",
+    // The hidden path, revealed backward: start at the reply (the goal met)
+    // and click back to the trigger. Makes "design backward from the end",
+    // the rule the trigger slide just stated, literal before mapping forward.
+    <HiddenStepsSlide />,
+
+    // Map the path low-fi; folds the old "screens in sequence",
     // "checkout chart", and "tools" slides into one. Checkout as the visual.
     <Slide className="flex flex-col">
       <h2 className="font-serif text-h2 tracking-tight">Map the path before the pixels</h2>
@@ -658,10 +729,13 @@ export const week9 = {
         <div className="flex max-w-md flex-col justify-center gap-5">
           <Lead>
             {[
-              <>Before you design a single screen, sketch the route.</>,
               <>
-                Boxes are screens, diamonds are decisions, start at the{" "}
-                <strong className="text-foreground">trigger</strong>, end at the{" "}
+                Sketch the <strong className="text-foreground">path</strong> that delivers Sarah's
+                job, before any screens.
+              </>,
+              <>
+                Boxes are screens, diamonds are decisions: from the{" "}
+                <strong className="text-foreground">trigger</strong> to the{" "}
                 <strong className="text-foreground">goal met</strong>.
               </>,
             ]}
@@ -669,17 +743,12 @@ export const week9 = {
           <ul className="space-y-2">
             {[
               <>
-                The stakes: about <strong>70% of online carts are abandoned</strong>, and a long or complicated checkout is a top documented reason
+                We learn the moves on <strong>checkout</strong>, then you map yours
               </>,
               <>
-                This checkout has two branches that decide everything: <strong>signed in or guest</strong>, <strong>payment approved or not</strong>
+                About <strong>70% of carts are abandoned</strong>. The route is usually what loses people
               </>,
-              <>
-                Same shape in B2B: convert a lead, open the opportunity, move the stage, close
-              </>,
-              <>
-                Label every arrow with the action, name screens the way users see them, keep it rough. The tool barely matters
-              </>,
+              <>Keep it rough, label every arrow with its action</>,
             ].map((p, i) => (
               <li key={i} className="flex items-baseline gap-2 text-body">
                 <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-foreground" />
@@ -726,6 +795,35 @@ export const week9 = {
     </Slide>,
 
     // ── Part 2: a flow is a story ─────────────────────────────────
+    <Slide>
+      <Eyebrow>Same job, older craft</Eyebrow>
+      <h2 className="mt-2 font-serif text-h2 tracking-tight">
+        A wireframe is a storyboard
+      </h2>
+      <div className="mt-6 grid grid-cols-[minmax(0,52%)_1fr] items-center gap-12">
+        <Media {...asset("week9.storyboard")} />
+        <div>
+          <Lead className="max-w-xl">
+            Before a frame is animated, the film is drawn as rough panels, one per beat, just
+            enough to judge the sequence. That's a wireframe.
+          </Lead>
+          <ul className="mt-6 space-y-2">
+            {[
+              <>Rough on purpose, so the team argues about the <Highlight>story, not the polish</Highlight></>,
+              <>One panel per beat, you read the <strong>whole sequence at a glance</strong></>,
+              <>Cheap to redraw, so scenes get cut and reordered before anything's expensive</>,
+              <>The polish, color, lighting, motion, comes <strong>after</strong> the sequence works</>,
+            ].map((p, i) => (
+              <li key={i} className="flex items-baseline gap-2 text-body">
+                <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-foreground" />
+                <span>{p}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </Slide>,
+
     <DividerSlide title="A flow is a story" />,
 
     <StoryArcSlide />,
@@ -816,12 +914,28 @@ export const week9 = {
         </>,
       ]}
       source={<>The Hook Model: Nir Eyal, <em>Hooked: How to Build Habit-Forming Products</em> (2014)</>}
+      media={asset("week9.hookModel")}
+    />,
+
+    // In-class exercise: reverse-engineer the arc on a real product. Orange
+    // wash marks it as a hands-on activity (the standing cue). No timebox set.
+    <ActivitySlide
+      index={1}
+      title="Reverse-engineer a peak"
+      steps={[
+        <>Pick an app open on your laptop right now</>,
+        <>Find its <Highlight>peak</Highlight>, the one moment you came for</>,
+        <>
+          Draw the flow that leads there. A rough flow chart by hand is perfect; words work too
+        </>,
+        <>How does the <strong>resolution</strong> look?</>,
+      ]}
     />,
 
     // ── Part 3: make many screens feel like one (the core) ────────
     <DividerSlide title="Make many screens feel like one" />,
 
-    // Continuity of layout — the shell. First of the three layers,
+    // Continuity of layout; the shell. First of the three layers,
     // and where the design system pays off (callback to Week 7). Merges the old
     // concept + gallery into one.
     <Slide className="flex flex-col">
@@ -840,30 +954,21 @@ export const week9 = {
       </div>
     </Slide>,
 
-    <ConceptSlide
-      title={'"Wait, didn\'t I already tell you that?"'}
-      definition={<><strong>Continuity</strong> of information: each screen remembers what the last one did. Carry it forward so people never re-enter or re-decide.</>}
-      points={[
-        <>
-          Keep what they picked visible across the steps. On Spotify the <strong>song keeps playing</strong> while you browse, the context travels with you
-        </>,
-        <><strong>Show progress</strong> so they know where they are in the journey</>,
-        <>
-          Recognition over recall: <strong>carry the context</strong> so they don't have to remember it. Gong keeps your recent accounts a click away
-        </>,
-      ]}
-    />,
-
     <SplitMediaSlide
       title="Continuity in motion"
       points={[
         <>
-          <strong>Continuity of space</strong>: transitions connect screens, so the flow feels like one continuous place
+          <strong>Continuity of space</strong>: motion links the screens into one place
         </>,
         <>
-          A shared element that <strong>moves</strong> keeps the user oriented, like Spotify's player bar expanding into the full-screen player
+          <strong>Expanding</strong>: a shared element grows into the next screen, like Spotify's mini-player into the full player
         </>,
-        "Reserve the space so the layout holds steady when content loads",
+        <>
+          <strong>Placeholders</strong>: skeleton shapes hold the layout while content loads
+        </>,
+        <>
+          <strong>Loaders</strong>: show progress when the wait is real
+        </>,
       ]}
       media={asset("week9.transition")}
     />,
@@ -875,7 +980,7 @@ export const week9 = {
           The same flow is a <strong>different journey</strong> the first time, when it's empty, and when something breaks. Design each state
         </>,
         <>
-          Treat empty, loading, error, and success as scenes: Spotify's empty library and offline mode, Gong's empty pipeline and a failed save
+          Treat <strong>empty</strong>, <strong>loading</strong>, <strong>error</strong>, and <strong>success</strong> as scenes: Spotify's empty library and offline mode, Gong's empty pipeline and a failed save
         </>,
         "Design the first run on purpose. It's the only first impression you get",
       ]}
@@ -883,7 +988,7 @@ export const week9 = {
     />,
 
     // ── Part 4: make it real (prototype + AI) ─────────────────────
-    <DividerSlide title="Make it real" />,
+    <DividerSlide title="Make it real" subtitle="Or at least, closer to reality" />,
 
     <Slide>
       <div className="grid grid-cols-[1fr_minmax(0,46%)] items-center gap-10">
@@ -977,7 +1082,7 @@ export const week9 = {
         Four parts, in order, the same spine we used all class. Ten minutes is short, so spend most
         of it on the <strong className="text-foreground">flow</strong> and keep the rest tight.
       </p>
-      <ol className="mt-6 space-y-4">
+      <ol className="mt-5 space-y-3">
         {[
           {
             t: "The idea & quick background",
@@ -990,9 +1095,9 @@ export const week9 = {
             d: "Tokens, components, states, and the rules you set. Show it on screen, walk us through it.",
           },
           {
-            t: "One major flow, start to end",
+            t: "Your core, major flow, start to end",
             m: "~5 min",
-            d: "The heart of the talk. Walk us through the flow and click the prototype through it. Trigger to payoff.",
+            d: "The heart of the talk. Choose the one flow your product lives or dies on, then walk it trigger to payoff and click the prototype through it. As an extra, call out the edge cases you handle.",
           },
           {
             t: "The decisions",
@@ -1014,9 +1119,22 @@ export const week9 = {
           </li>
         ))}
       </ol>
+      <div className="mt-4 rounded-lg border border-border bg-card px-4 py-3">
+        <span className="text-caption font-semibold uppercase tracking-wider text-muted-foreground">
+          What counts as a “core” flow?
+        </span>{" "}
+        <span className="text-body text-muted-foreground">
+          The one your product lives or dies on, not a settings screen. A pet-shop management
+          desktop app would choose from flows like{" "}
+          <Highlight>ring up a sale at the counter</Highlight>,{" "}
+          <Highlight>book a grooming appointment</Highlight>, or{" "}
+          <Highlight>receive &amp; shelve a delivery</Highlight> — then handle the edge cases
+          inside it.
+        </span>
+      </div>
       <a
         href="#/assignment/9"
-        className="mt-5 inline-block text-body font-medium decoration-accent decoration-2 underline underline-offset-4"
+        className="mt-4 inline-block text-body font-medium decoration-accent decoration-2 underline underline-offset-4"
       >
         Read the full brief →
       </a>
@@ -1095,68 +1213,77 @@ export const week9 = {
       </div>
     </Slide>,
 
+    // Closing: the prep checklist and the 1:1 support offer, merged. The
+    // checklist is the actionable spine; the side card folds in the old
+    // "Let's get you ready, 1:1" slide so the offer rides alongside the asks.
     <Slide>
       <Eyebrow>Between now and July 8</Eyebrow>
       <h2 className="mt-2 font-serif text-h2 tracking-tight">Get the journey ready</h2>
-      <ul className="mt-6 max-w-3xl space-y-2">
-        {[
-          <>
-            Finish the flow <strong>end to end</strong>, every state, no gaps
-          </>,
-          <>
-            Walk it as a story: does it have a clear <strong>goal, peak, and ending</strong>?
-          </>,
-          <>
-            <Highlight>Rehearse out loud and time it to 10 minutes.</Highlight> Both of you present
-          </>,
-          "Bring the Figma link ready to open, no setup on the day",
-        ].map((p, i) => (
-          <li key={i} className="flex items-baseline gap-2 text-body">
-            <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-foreground" />
-            <span>{p}</span>
-          </li>
-        ))}
-      </ul>
-      <a
-        href="#/assignment/9"
-        className="mt-6 inline-block text-body font-medium decoration-accent decoration-2 underline underline-offset-4"
-      >
-        Read the full brief →
-      </a>
+      <div className="mt-6 grid grid-cols-[1fr_minmax(0,36%)] items-start gap-10">
+        <div>
+          <ul className="space-y-2">
+            {[
+              <>
+                Finish the flow <strong>end to end</strong>, every state, no gaps
+              </>,
+              <>
+                Walk it as a story: does it have a clear <strong>goal, peak, and ending</strong>?
+              </>,
+              <>
+                <Highlight>Rehearse out loud and time it to 10 minutes.</Highlight> Both of you present
+              </>,
+              "Bring the Figma link ready to open, no setup on the day",
+            ].map((p, i) => (
+              <li key={i} className="flex items-baseline gap-2 text-body">
+                <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-foreground" />
+                <span>{p}</span>
+              </li>
+            ))}
+          </ul>
+          <a
+            href="#/assignment/9"
+            className="mt-6 inline-block text-body font-medium decoration-accent decoration-2 underline underline-offset-4"
+          >
+            Read the full brief →
+          </a>
+        </div>
+        <div className="rounded-2xl border bg-card p-6">
+          <Eyebrow>We're here to help</Eyebrow>
+          <p className="mt-2 font-serif text-h3 tracking-tight">1:1 sessions</p>
+          <p className="mt-3 text-body text-muted-foreground">
+            For the next <Highlight>two weeks</Highlight> we'll run{" "}
+            <strong className="text-foreground">20-minute sessions per pair</strong> to get your
+            final presentation in shape. Bring whatever you have.
+          </p>
+        </div>
+      </div>
       <Source>Final presentation: Wed, July 8, 15:45, Gong · Icon Tower (floor 22), Ramat Gan</Source>
-    </Slide>,
-
-    <Slide className="flex flex-col items-center justify-center text-center">
-      <Eyebrow>Before the finals</Eyebrow>
-      <h2 className="mt-3 font-serif text-h1 tracking-tight">Let's get you ready, 1:1</h2>
-      <p className="mt-6 max-w-2xl text-h3 font-normal text-muted-foreground">
-        For the next <Highlight>two weeks</Highlight> we'll run <strong>1:1 sessions, 20 minutes per
-        pair</strong>, to help with your final presentations.
-      </p>
     </Slide>,
   ],
   notes: [
     // 1. Title
     "Frame it in one line: today is about the whole journey, the sequence of screens a user moves through to reach a goal. By the end you'll know how to make your flow better, and you'll have the brief for your final presentation. Two products ride along the whole class: Spotify and Gong, one consumer, one B2B, and Gong is where you'll present next month.",
     // 2. Cold open: the customer message
-    "Cold open, before any agenda. Read the message off the slide and let it sit for a beat. Sarah is the small-business owner you've been designing for all semester. Ask the room: where does her journey start? Most will say the home screen. It starts here, out in her day, with the app still closed. Then advance: let's watch what happens next.",
-    // 3. The hidden path
-    "Let it play: the line draws from her message to her reply, and four steps pop in along the way: open the app, check Saturday, price the cake, write the quote. Then land the numbers: the message came in at 9:12, the reply went out at 9:13, and she won the customer before they asked another baker. Each of those four steps is a screen in the product you're building. That's the stage for today: the path between a trigger and its goal is the flow, and we design it on purpose. Quiet foreshadow: this same left-to-right axis, trigger on the left, goal met on the right, comes back as the story arc after the break. We also pick this exact message back up in a few slides and turn it into a job.",
-    // 4. Recap
+    "Cold open, before any agenda. Read the message off the slide and let it sit for a beat. Sarah is the small-business owner you've been designing for all semester. Ask the room: where does her journey start? Most will say the home screen. It starts here, out in her day, with the app still closed. Hold that image; we come back to this exact minute later and trace it, once we've set up how to read a flow.",
+    // 3. Recap
     "Quick callback to the in-class redesign workshop: the interface inventory and heuristic eval you ran on your own product. Point at the PNC inventory on screen, that's what yours looked like. Then set the level: most of you already have a sequence of screens by now. Good. Today we make yours better.",
-    // 5. Agenda
+    // 4. Agenda
     "Walk the plan. The center of gravity is the middle: making many screens feel like one product, with states. The goal and the story framing get us there; the prototype makes it real. We end with the final brief.",
-    // 6. Thesis
+    // 5. Thesis
     "Open with the book analogy: a novel can have unforgettable characters and a plot that goes nowhere, the writing is strong and you still put it down. Your screens are the characters; the flow is the plot. So the question today is when a flow is actually good. Hand them the three tests up front, because they are the spine of today: it starts from the user's goal (Part 1), it moves like a story with a setup and a payoff (Part 2), and it feels like one product across every screen (Part 3). After that we make it real and test it with a prototype, then the final brief. Point at the clip looping on the right: a 12-step onboarding where the progress bar and microinteractions make twelve screens feel like one journey. Ask: who has used an app where each screen was fine but the whole thing felt confusing? That's a flow problem, and that's what we fix today.",
-    // 7. Divider: start from the goal
+    // 6. Divider: start from the end
     "Section break. The point I most want them to take: the journey begins out in the user's life, before your app opens, with a trigger and a goal.",
-    // 8. The trigger & the job
-    "Use their own product, the small-business app. The trigger lives out in the owner's day: the cold open's message, 'Can you do a gluten-free cake for Saturday?', now back on screen. That message is where the journey really starts, before the app is even open. Then name the job: When [situation], I want to [motivation], so I can [outcome]. For Sarah: when that message comes in, she wants to check the calendar and quote a price in under a minute, so she answers before they ask another baker. The two ends carry the weight: 'when' sets where the flow starts, 'so I can' sets when it's done, the customer has their answer. The famous version, if you want it: Christensen's milkshake study. McDonald's discovered nearly half their milkshakes sold before 8am, hired for the long boring commute, competing with bananas and bagels rather than other desserts. Naming the job changed what they improved (thicker shake, lasts the whole drive). Apple did it in six words: '1,000 songs in your pocket' names the iPod's job, with zero specs. Make them write the sentence for their own app, out loud. If they can't, they don't yet know what they're designing. Tie it back to the section: start from that end and design backward.",
+    // 7. The trigger & the job
+    "Use their own product, the small-business app. Pay off the divider first: start from the end. Every flow exists to deliver one outcome, so name the goal before anything else, that's where you start designing. Write it as a job: When [situation], I want to [motivation], so I can [outcome]. The 'so I can' is the end; the 'when' is the trigger that sets it off, out in the owner's day before the app is even open, the cold open's message, 'Can you do a gluten-free cake for Saturday?', now back on screen. For Sarah: when that message comes in, she wants to check the calendar and quote a price in under a minute, so she answers before they ask another baker. The two ends carry the weight: 'so I can' sets when it's done, the customer has their answer; 'when' sets where it begins. Design backward from the end. The famous version, if you want it: Christensen's milkshake study. McDonald's discovered nearly half their milkshakes sold before 8am, hired for the long boring commute, competing with bananas and bagels rather than other desserts. Naming the job changed what they improved (thicker shake, lasts the whole drive). Apple did it in six words: '1,000 songs in your pocket' names the iPod's job, with zero specs. Make them write the sentence for their own app, out loud. If they can't, they don't yet know what they're designing. Tie it back to the section: start from that end and design backward.",
+    // 8. The hidden path, revealed backward
+    "This is 'design backward' made literal, and it pays off the job sentence you just wrote. Both ends are on screen from the start: her message at 9:12, the trigger, and her reply at 9:13, the goal met, the customer won before they asked another baker. You know where it starts and where it ends, the question is the path between. So click back one step at a time, right to left: first the line appears between the two, then write the quote, price the cake, check Saturday's free, open the app. Each click uncovers one screen she needed to get from the reply back to the message. Say the point out loud: you don't design a flow front to back, you fix the two ends and work back from the goal, discovering only the screens you actually need, no more. It also plants the axis the story arc reuses after the break: trigger on the left, goal on the right. Then hand off: now let's map that path going forward, on a flow everyone already knows.",
     // 9. Map the path
-    "Open with the stat on the slide: Baymard's running average across 50 studies puts cart abandonment at just over 70%, and a long or complicated checkout is one of the top documented reasons. The route is usually what loses people, so we map the route first. Keep it low-fi: boxes and arrows. Have them trace the checkout out loud: cart, checkout, sign-in branch, shipping, payment, review, then the approval branch with its retry loop. Two decisions carry the whole flow. Then the B2B parallel: a rep converts a lead to an opportunity, moves the stage, closes it. Same shape, different domain. The tool barely matters, FigJam, Whimsical, Excalidraw, Miro; pick one both partners can edit and keep it rough. Dor's rule: a flow chart earns its place when you can read the story off it. Never draw one just to have one.",
+    "Make the handoff explicit first: they just wrote Sarah's job sentence, so now we design the path that delivers it. To learn the moves, we read them off the flow everyone already knows, checkout, then they do the exact same thing for their own product. Now the stat: Baymard's running average across 50 studies puts cart abandonment at just over 70%, and a long or complicated checkout is one of the top documented reasons. The route is usually what loses people, so we map the route first. Keep it low-fi: boxes and arrows. Have them trace the checkout out loud: cart, checkout, sign-in branch, shipping, payment, review, then the approval branch with its retry loop. Two decisions carry the whole flow. Then the B2B parallel: a rep converts a lead to an opportunity, moves the stage, closes it. Same shape, different domain. The tool barely matters, FigJam, Whimsical, Excalidraw, Miro; pick one both partners can edit and keep it rough. Dor's rule: a flow chart earns its place when you can read the story off it. Never draw one just to have one.",
     // 10. Stay low-fidelity
     "This is the emphasis. Wireframe while the flow is still moving. The real reason is commitment: grey boxes are easy to throw away, so you keep exploring. A polished screen looks finished, so people stop questioning it. See the whole flow before the details of any one screen. Point at the grey-box wireframe: every image is a placeholder, and that's the point. Ask: who has over-polished a screen and then hated to change it?",
-    // 11. Divider: a flow is a story
+    // 11. A wireframe is a storyboard
+    "The bridge into the story section, and a callback to the spine: the flow is a film. Before a single frame of Star Wars is shot, the trench run exists as rough panels, one per beat, just enough to judge whether the sequence works, X-wings diving, the TIE fighters, the laser. Point at the panels: nobody's arguing about lighting or model detail here, they're arguing about the story and the timing, because that's all the drawing lets you see. That's exactly what a wireframe is and why we keep it grey: rough on purpose, one box per beat, cheap to redraw, so scenes get cut and reordered before anything's expensive. Polish, lighting, motion, comes after the sequence works, never before. So when we say judge your flow as a story next, this is the artifact you judge it on. Ask: if your wireframes were storyboard panels, could someone read the plot without you narrating?",
+    // 12. Divider: a flow is a story
     "Section break, and the heart of the framing. The best way to judge a flow is to tell it as a story. If it doesn't read as one, it isn't done.",
     // 12. Story arc
     "Click each beat on the arc, left to right; the panel loads its definition and an example from both products. Setup is entry and the empty state. Hook is the first action that earns attention, Spotify plays in one tap, Gong surfaces the one account that needs you today. Rising action is the steps with momentum. The peak is the payoff, Spotify's perfect song, Gong's follow-up done and the deal moving, the moment they remember, design it hardest. Resolution is confirmation and a next step. Then ask which beat their own flow is missing, usually a weak peak or a thin resolution. Note: the loop that brings them back is its own slide in a moment.",
@@ -1168,12 +1295,12 @@ export const week9 = {
     "Kahneman's peak-end rule: we remember an experience by its best moment and its ending. The origin study is worth telling: Kahneman and Redelmeier tracked colonoscopy patients in the 90s. What patients remembered tracked the worst moment and the final moments, and the length of the procedure barely registered (duration neglect). A longer procedure with a gentler ending was remembered as less painful than a shorter, harsher one. That's how memory scores every experience, including your flow. So spend your effort on the peak and the ending. Point at the Asana shot: those rainbow creatures fire off when you clear your tasks, a peak someone designed on purpose, not by accident. Spotify's peak is the song that fits perfectly. A blank screen after the main action throws away a good flow. Ask: what's the peak in your product, and did you design it, or does it just happen?",
     // 16. The Hook loop
     "The coda the arc slide promised. Peak-end says memory keeps the peak and the ending; Eyal's Hook Model is about what the ending does next: trigger, action, variable reward, investment, and around again. Walk the two examples: on Spotify, saving the song is the investment, the library and the mixes get better, so tomorrow starts one tap closer. On Gong, the resolution queues the next to-do, so today's ending is literally tomorrow's trigger. Have them walk their own resolution and ask what brings the user back. One caution to say out loud: the loop has to serve the user's job from the trigger slide. A loop that serves only engagement is a dark pattern, and we'll grade it as one.",
+    // Activity: reverse-engineer a peak
+    "Quick hands-on, five minutes, solo. Have everyone pick an app open on their laptop right now, find its peak, the one moment they came for, and sketch the flow that leads there by hand, a rough chart or even words. Then look at the resolution: what happens right after the peak? The point is to feel peak-end in something they didn't design before they design their own. Take three or four out loud, then move into the core of the week.",
     // 17. Divider: make many screens feel like one
     "Section break, and the real topic of the week. Five screens can each be on-system and still feel like five different apps. Continuity is the fix, and it has three layers: layout, information, space.",
     // 18. Same shell (continuity of layout)
     "Layer one, the shell. Frame this as a callback, not new material: we already did consistency and design systems, this is just how that same idea shows up across a flow (that framing lives here in the notes; the slide stays lean). Point at the two Gong screens, To-dos and Deals: the purple sidebar and the top header are identical, only the main region changes. That stillness is what lets the content change while the user stays oriented. Jakob's Law: people expect yours to behave like the apps they already use. Ask them to name what stays put in their own product across two screens.",
-    // 19. Carry context (continuity of information)
-    "Layer two, information. Carry forward what they already did and keep it visible, so they never re-enter or re-decide. The cleanest example is Spotify: the song keeps playing as you move around, the context literally travels with you. Show progress. Gong keeps your recent accounts one click away. Recognition over recall, applied across screens.",
     // 20. Continuity in motion (continuity of space)
     "Layer three, space. A good transition says the new screen is part of the same world. The textbook example is Spotify's player bar expanding into the full-screen player, a shared element that moves and keeps you oriented. Reserve space so the layout holds steady on load. The slot here is for a real product clip, paste a URL or drop an mp4 and it plays.",
     // 21. State by state
@@ -1189,14 +1316,12 @@ export const week9 = {
     // 26. Divider: your final presentation
     "Shift to logistics and the brief. Tone change: this is what the whole semester has been building to.",
     // 27. What you'll present
-    "Set the expectation: a story in four parts, in order, and it maps exactly onto today's lecture. The idea and background, then the design system shown, then one flow end to end (walk it, then click the prototype), then the decisions. Ten minutes per pair, both partners, timed. Stress using the time smartly: most of it on the flow, keep the intro and the system quick. The common mistake is flipping through screens with no narrative. The full brief is linked on the slide.",
+    "Set the expectation: a story in four parts, in order, and it maps exactly onto today's lecture. The idea and background, then the design system shown, then one flow end to end (walk it, then click the prototype), then the decisions. Ten minutes per pair, both partners, timed. Stress using the time smartly: most of it on the flow, keep the intro and the system quick. The common mistake is flipping through screens with no narrative. Spend a beat on what 'core' means, because pairs default to an easy flow, not their most important one. Use the pet-shop management example on the slide: the core flows are ringing up a sale, booking a grooming slot, or receiving a delivery, never the settings screen. Pick the one the business can't run without. As an extra, ask them to show the edge cases inside that flow, empty, error, the unhappy path. The full brief is linked on the slide.",
     // 28. Done checklist
     "Read it as the spec for the final. Four buckets: idea and background, design system, the one flow, the talk. Call out the ones students drop: the states inside the flow, and rehearsing to time. It's the 60% final, in pairs, Figma with Material Design 3.",
     // 29. Logistics + map
     "Say the details clearly and twice. Wednesday, July 8, at 15:45. Gong, now at Icon Tower, Menachem Begin Rd, Ramat Gan, floor 22, ask for Sia. Map's on the slide. Arrive a few minutes early, Figma open before you walk in.",
-    // 30. Closing
-    "Send them off: finish the flow end to end with every state, walk it as a story to check it has a goal, a peak, and an ending, rehearse out loud and time it to 10 minutes, bring the link ready. Last line: come tell us the story, see you at Gong on July 8.",
-    // 31. 1:1 sessions
-    "Logistics close: for the next two weeks we'll run 1:1 sessions, 20 minutes per pair, to help get the final presentation in shape. Bring whatever you have, the flow, the prototype, the open questions. Tell them how to sign up.",
+    // 30. Closing: prep checklist + 1:1 sessions
+    "Send them off with the checklist: finish the flow end to end with every state, walk it as a story to check it has a goal, a peak, and an ending, rehearse out loud and time it to 10 minutes, and bring the Figma link ready to open. Then point at the card: we're here to help, for the next two weeks we'll run 1:1 sessions, 20 minutes per pair, to get the presentation in shape, bring whatever you have, the flow, the prototype, the open questions, and here's how to sign up. Last line: come tell us the story, see you at Gong on July 8.",
   ],
 };

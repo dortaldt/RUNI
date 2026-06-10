@@ -89,8 +89,8 @@ export function Deck({
     return () => window.removeEventListener("keydown", onKey);
   }, [go]);
 
-  // Edit mode: make every text container in the current slide editable — both
-  // its words and its inline formatting (bold/italic) — and persist changes to
+  // Edit mode: make every text container in the current slide editable; both
+  // its words and its inline formatting (bold/italic); and persist changes to
   // source on blur. Content is serialized to a normalized, JSX-shaped string so
   // a <strong> toggle round-trips. Re-runs when the slide (i) changes.
   useEffect(() => {
@@ -102,7 +102,7 @@ export function Deck({
     try {
       document.execCommand("styleWithCSS", false, "false");
     } catch {
-      /* not supported — serializer folds styled spans anyway */
+      /* not supported; serializer folds styled spans anyway */
     }
 
     const units = collectUnits(root);

@@ -49,7 +49,7 @@ export function Home() {
           to="/dbd"
           className="rounded-lg border bg-card px-4 py-2 text-body font-medium transition-colors hover:bg-muted"
         >
-          DBDs — Dor's Brain Dump →
+          DBDs: Dor's Brain Dump →
         </Link>
       </div>
 

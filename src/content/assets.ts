@@ -33,12 +33,27 @@ export const assets: Record<string, Asset> = {
     aspect: "16/10",
     caption: "A landing page in grey boxes: structure before any visual polish",
   },
+  "week9.storyboard": {
+    src: "/refs/star-wars-storyboard.jpg",
+    contain: true, // rough panels: show the whole sequence
+    aspect: "16/10",
+    caption:
+      "Storyboard for the Death Star trench run in Star Wars: rough panels that plan the whole sequence before a single frame is shot",
+    credit: "Lucasfilm",
+  },
   "week9.asanaPeak": {
     src: "/refs/asana-celebration.jpeg",
     contain: true,
     aspect: "16/10",
     caption: "Asana celebrates when you clear your tasks: the peak, designed on purpose",
     credit: "Asana",
+  },
+  "week9.hookModel": {
+    src: "/refs/hook-model.png",
+    contain: true,
+    aspect: "4/3",
+    caption: "The Hook Model: trigger → action → variable reward → investment, and around again",
+    credit: "Nir Eyal, Hooked (2014)",
   },
   "week9.emailPrototype": {
     src: "/refs/prototype-demo.mp4",

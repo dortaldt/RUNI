@@ -73,7 +73,7 @@ export function BrainDump() {
       </p>
       <h1 className="mt-2 font-serif text-h1 tracking-tight">Dor's Brain Dump</h1>
       <p className="mt-6 max-w-3xl text-body text-muted-foreground">
-        The raw material behind the course — thoughts and references caught during the day, before
+        The raw material behind the course: thoughts and references caught during the day, before
         they're shaped into a lecture. Nothing here is polished. It's posted as-is so you can see
         where the ideas come from and how a stray observation becomes a slide.
       </p>

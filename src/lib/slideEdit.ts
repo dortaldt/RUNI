@@ -5,11 +5,11 @@
  * directly on a slide and persist it to the JSX source. To make that round-trip
  * reliable we:
  *
- *   1. Make whole text *containers* editable, not just pure-text leaves — so the
+ *   1. Make whole text *containers* editable, not just pure-text leaves; so the
  *      words sitting next to a <strong> are reachable too.
  *   2. Serialize a container's content to a normalized, JSX-shaped string where
  *      bold is always <strong> and italic is always <em> (browsers emit <b>/<i>
- *      or inline-styled <span>s from execCommand — we fold those back). The
+ *      or inline-styled <span>s from execCommand; we fold those back). The
  *      server matches this against the deck source, so what you see maps to what
  *      gets written.
  */
@@ -34,7 +34,7 @@ function inlineTag(el: Element): "strong" | "em" | "br" | null {
 
 /**
  * execCommand("bold"/"italic") can emit a bare `<span style="font-weight:…">`
- * instead of a tag. Recognize that (and only that — a classed <span> is real
+ * instead of a tag. Recognize that (and only that; a classed <span> is real
  * structure like <Highlight>, which we must not touch) and fold it to a tag.
  */
 function styleWrapper(el: HTMLElement): "strong" | "em" | null {
@@ -48,7 +48,7 @@ function styleWrapper(el: HTMLElement): "strong" | "em" | null {
 /**
  * Is `el` a self-contained editable unit? True when it holds visible text and
  * every nested element is inline formatting we can serialize. A container with
- * any unknown element (a bullet wrapper, a <Highlight>/<mark>, an icon) is not —
+ * any unknown element (a bullet wrapper, a <Highlight>/<mark>, an icon) is not;
  * we descend past it to find cleaner units inside.
  */
 function isEditableUnit(el: Element): boolean {
@@ -96,7 +96,7 @@ function rawSerialize(el: HTMLElement): string {
 
 /**
  * Serialize a unit's content to a normalized, whitespace-collapsed, JSX-shaped
- * string — the canonical form both the focus snapshot and the save payload use.
+ * string; the canonical form both the focus snapshot and the save payload use.
  */
 export function serializeUnit(el: HTMLElement): string {
   return rawSerialize(el).replace(/\s+/g, " ").trim();

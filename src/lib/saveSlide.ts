@@ -1,6 +1,6 @@
 /**
  * Persist an inline slide edit back to the deck source via the dev endpoint
- * defined in `plugins/slide-editor.ts`. Dev-only — there is no server to write
+ * defined in `plugins/slide-editor.ts`. Dev-only; there is no server to write
  * to in a production build, so callers should gate on `import.meta.env.DEV`.
  */
 type SaveResult = { ok: boolean; file?: string; error?: string };

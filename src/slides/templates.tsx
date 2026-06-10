@@ -292,15 +292,18 @@ export function ConceptSlide({
   points,
   source,
   icon,
+  media,
 }: {
   title: string;
   definition?: ReactNode;
   points?: ReactNode[];
   source?: ReactNode;
   icon?: string;
+  /** Optional visual shown beside the text (right column). */
+  media?: MediaProps;
 }) {
-  return (
-    <Slide className={icon ? ICON_RAIL : undefined}>
+  const body = (
+    <>
       <TitleWithIcon icon={icon}>{title}</TitleWithIcon>
       {definition && (
         <p className="mt-4 max-w-3xl font-serif text-h3 font-normal text-muted-foreground">
@@ -318,8 +321,27 @@ export function ConceptSlide({
         </ul>
       )}
       {source && <Source>{source}</Source>}
-    </Slide>
+    </>
   );
+  if (media) {
+    return (
+      <Slide>
+        {/* Reserve bottom space when a Source is present: the footnote is pinned
+            absolute (bottom-6), so without this the vertically-centered text can
+            drift down and overlap it on tall content. */}
+        <div
+          className={cn(
+            "grid grid-cols-[1fr_minmax(0,40%)] items-center gap-10",
+            source && "pb-12",
+          )}
+        >
+          <div>{body}</div>
+          <Media {...media} />
+        </div>
+      </Slide>
+    );
+  }
+  return <Slide className={icon ? ICON_RAIL : undefined}>{body}</Slide>;
 }
 
 export function ComparisonSlide({
@@ -439,10 +461,10 @@ export function ActivitySlide({
 }: {
   index: number;
   title: string;
-  minutes: string;
+  minutes?: string;
   method?: { label: string; href?: string };
   steps: ReactNode[];
-  output: ReactNode;
+  output?: ReactNode;
   link?: { label: string; href: string };
   // Optional reference visual shown beside the steps (right column).
   figure?: { src?: string; caption: string; credit?: string; href?: string };
@@ -460,20 +482,25 @@ export function ActivitySlide({
           </li>
         ))}
       </ol>
-      <p className="mt-5 text-body">
-        <span className="font-semibold">Output: </span>
-        {output}
-      </p>
+      {output && (
+        <p className="mt-5 text-body">
+          <span className="font-semibold">Output: </span>
+          {output}
+        </p>
+      )}
     </>
   );
   const withIcon = !!icon && !figure;
   return (
-    <Slide className={withIcon ? ICON_RAIL : undefined}>
+    // Light-orange wash is the standing cue for an in-class activity.
+    <Slide className={cn("bg-orange-50", withIcon && ICON_RAIL)}>
       <div className="flex items-center gap-3">
         <Eyebrow>Activity {index}</Eyebrow>
-        <span className="rounded-md bg-accent px-3 py-1 text-caption font-semibold text-accent-foreground">
-          ⏱ {minutes}
-        </span>
+        {minutes && (
+          <span className="rounded-md bg-accent px-3 py-1 text-caption font-semibold text-accent-foreground">
+            ⏱ {minutes}
+          </span>
+        )}
       </div>
       <TitleWithIcon icon={withIcon ? icon : undefined} className="mt-2">
         {title}
@@ -524,15 +551,21 @@ export function ActivitySlide({
 
 export function DividerSlide({
   title,
+  subtitle,
   pattern,
 }: {
   title: string;
+  /** Optional supporting line shown under the title. */
+  subtitle?: string;
   /** The course design pattern this section connects to (shown as a chip). */
   pattern?: string;
 }) {
   return (
     <Slide center>
       <h2 className="text-balance font-serif text-display font-bold tracking-tight">{title}</h2>
+      {subtitle && (
+        <p className="mt-4 text-balance text-h3 font-normal text-muted-foreground">{subtitle}</p>
+      )}
       {pattern && (
         <p className="mt-6 text-caption font-medium uppercase tracking-widest text-muted-foreground">
           Linked pattern
